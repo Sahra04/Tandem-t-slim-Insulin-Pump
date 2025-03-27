@@ -202,6 +202,457 @@ background-color: rgb(119, 118, 123);</string>
          <string>+</string>
         </property>
        </widget>
+       <widget class="QWidget" name="current_status_screen" native="true">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>691</width>
+          <height>411</height>
+         </rect>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);
+background-color: rgb(119, 118, 123);</string>
+        </property>
+        <widget class="QLabel" name="label_3">
+         <property name="geometry">
+          <rect>
+           <x>240</x>
+           <y>20</y>
+           <width>231</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font: 75 20pt &quot;DejaVu Sans&quot;;</string>
+         </property>
+         <property name="text">
+          <string>Current Status</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_4">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>70</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Profile Name</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_13">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>110</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Basal Rate</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_5">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>150</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Last Bolus Amount</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_14">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>190</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Last Bolus Time</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_27">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>230</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Correction Factor</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_28">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>270</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Carb Ratio</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_37">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>310</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Target BG</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_38">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>350</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string>Insulin Duration</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="target_BG_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>310</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="profile_name_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>70</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="insulin_duration_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>350</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="carb_ratio_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>270</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="last_bolus_amount_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>150</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="last_bolus_time_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>190</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="basal_rate_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>110</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="correction_factor_label">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>230</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(222, 221, 218);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QWidget" name="options_screen" native="true">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>691</width>
+           <height>411</height>
+          </rect>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);
+background-color: rgb(119, 118, 123);</string>
+         </property>
+         <widget class="QLabel" name="label_7">
+          <property name="geometry">
+           <rect>
+            <x>240</x>
+            <y>20</y>
+            <width>231</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 75 20pt &quot;DejaVu Sans&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Options Screen</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="stop_resume_button">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>100</y>
+            <width>261</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(26, 95, 180);
+font: 75 20pt &quot;DejaVu Sans&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Stop</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="logs_screen_button">
+          <property name="geometry">
+           <rect>
+            <x>360</x>
+            <y>100</y>
+            <width>261</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(26, 95, 180);
+font: 75 20pt &quot;DejaVu Sans&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Logs</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton_6">
+          <property name="geometry">
+           <rect>
+            <x>850</x>
+            <y>130</y>
+            <width>261</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="personal_profiles_screen_button">
+          <property name="geometry">
+           <rect>
+            <x>360</x>
+            <y>240</y>
+            <width>261</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(26, 95, 180);
+font: 75 20pt &quot;DejaVu Sans&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Personal Profiles</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="setup_pin_screen_button">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>240</y>
+            <width>261</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(26, 95, 180);
+font: 75 20pt &quot;DejaVu Sans&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Setup Pin</string>
+          </property>
+         </widget>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </widget>
@@ -257,6 +708,22 @@ background-color: rgb(119, 118, 123);</string>
      </property>
      <property name="text">
       <string>Home</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="current_status_button">
+     <property name="geometry">
+      <rect>
+       <x>590</x>
+       <y>10</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(28, 113, 216);</string>
+     </property>
+     <property name="text">
+      <string>B</string>
      </property>
     </widget>
    </widget>

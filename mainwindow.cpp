@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //ui->textbox1->setReadOnly(1);
+
 
      connect(ui->recharge_button, SIGNAL(released()), this, SLOT(test1()));
 
