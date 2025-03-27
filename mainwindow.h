@@ -21,5 +21,17 @@ private:
 private slots:
     void test1();
     void test2();
+
+    void test_home();
+    void test_lock();
+    void test_log();
+    void test_profiles_list();
+    void test_profile();
+    void test_options();
+    void test_setup_pin();
+    void test_current_status();
+    void test_bolus();
+
+
 };
 #endif // MAINWINDOW_H
