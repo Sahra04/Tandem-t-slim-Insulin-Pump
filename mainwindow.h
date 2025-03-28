@@ -22,7 +22,7 @@ private slots:
     void test1();
     void test2();
 
-    void test_home();
+    void go_to_home();
     void test_lock();
     void test_log();
     void test_profiles_list();
@@ -31,6 +31,9 @@ private slots:
     void test_setup_pin();
     void test_current_status();
     void test_bolus();
+
+    void go_to_options();
+    void power();
 
 
 };

@@ -24,7 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->test_setup_pin_button, SIGNAL(released()), this, SLOT(test_setup_pin()));
      connect(ui->test_profile_button, SIGNAL(released()), this, SLOT(test_profile()));
      connect(ui->test_bolus_button, SIGNAL(released()), this, SLOT(test_bolus()));
-     connect(ui->home_button, SIGNAL(released()), this, SLOT(test_home()));
+     connect(ui->home_button, SIGNAL(released()), this, SLOT(go_to_home()));
+     connect(ui->home_options_button, SIGNAL(released()), this, SLOT(go_to_options()));
+     connect(ui->power_button, SIGNAL(released()), this, SLOT(power()));
 
 
 }
@@ -32,6 +34,53 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::power() {
+    if (ui->power_button->text() == "Power Off") {
+        ui->power_button->setText("Power On");
+        ui->Device->setHidden(0);
+        ui->lock_screen->setHidden(1);
+        ui->log_screen->setHidden(1);
+        ui->personal_profiles_list_screen->setHidden(1);
+        ui->current_status_screen->setHidden(1);
+        ui->options_screen->setHidden(1);
+        ui->setup_pin_screen->setHidden(1);
+        ui->personal_profile_screen->setHidden(1);
+        ui->bolus_screen->setHidden(1);
+        ui->home_screen->setHidden(1);
+        ui->battery->setHidden(1);
+        ui->insulin_cartidge->setHidden(1);
+        ui->current_status_button->setHidden(1);
+
+        // Design choice to hide home  button too
+        ui->home_button->setHidden(1);
+    } else {
+        ui->power_button->setText("Power Off");
+        ui->battery->setHidden(0);
+        ui->insulin_cartidge->setHidden(0);
+        ui->current_status_button->setHidden(0);
+
+        ui->home_button->setHidden(0);
+        go_to_home();
+    }
+    std::cout << "POWER BUTTON"<<std::endl;
+
+}
+
+void MainWindow::go_to_options(){
+    ui->Device->setHidden(0);
+    ui->lock_screen->setHidden(0);
+    ui->log_screen->setHidden(0);
+    ui->personal_profiles_list_screen->setHidden(0);
+    ui->current_status_screen->setHidden(0);
+    ui->options_screen->setHidden(0);
+
+    ui->setup_pin_screen->setHidden(1);
+    ui->personal_profile_screen->setHidden(1);
+    ui->bolus_screen->setHidden(1);
+    ui->home_screen->setHidden(1);
+    std::cout << "OPTIONS BUTTON"<<std::endl;
 }
 
 void MainWindow::test1(){
@@ -166,7 +215,7 @@ void MainWindow::test_bolus()  {
     std::cout << "BOLUS BUTTON"<<std::endl;
 }
 
-void MainWindow::test_home(){
+void MainWindow::go_to_home(){
     ui->Device->setHidden(0);
     ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
