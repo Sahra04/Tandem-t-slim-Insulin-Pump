@@ -12,5 +12,6 @@ public:
 
     void navithaprint();
     void navithaprint2();
+    void aleanaZtest();
 };
 #endif // BATTERY_H
