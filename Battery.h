@@ -4,7 +4,11 @@
 class Battery {
 private:
 
+
 public:
     void stefanyPrint();
+
+
+    void navithaprint();
 };
 #endif // BATTERY_H
