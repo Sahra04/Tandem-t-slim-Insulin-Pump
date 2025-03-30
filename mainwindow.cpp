@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->power_button, SIGNAL(released()), this, SLOT(power()));
      connect(ui->personal_profiles_list_add_button, SIGNAL(released()), this, SLOT(add_profile()));
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
+     connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
+     connect(ui->activate_profile_button, SIGNAL(released()), this, SLOT(activate_profile()));
 
 
 }
@@ -260,6 +262,18 @@ void MainWindow::edit_button(){
 
     }
     ui->edit_profile_button->setText("Save");
+}
+
+void MainWindow::delete_profile(){
+    std::string profileName = ui->profile_name_textbox->text().toStdString();
+    //UserProfileVector.deleteProfile(profileeName);
+    std::cout << "DELETE BUTTON" << std::endl;
+}
+
+void MainWindow::activate_profile(){
+    std::string profileName = ui->profile_name_textbox->text().toStdString();
+    //UserProfileVector.activate_profile(profileeName);
+    std::cout << "ACTIVATE BUTTON" << std::endl;
 }
 
 void MainWindow::go_to_home(){

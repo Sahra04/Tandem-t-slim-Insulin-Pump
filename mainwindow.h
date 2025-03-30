@@ -33,9 +33,10 @@ private slots:
     void test_setup_pin();
     void test_current_status();
     void test_bolus();
-
+    void delete_profile();
     void go_to_options();
     void power();
+    void activate_profile();
 
 
 };
