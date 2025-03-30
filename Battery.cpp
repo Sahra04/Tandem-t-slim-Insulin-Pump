@@ -27,6 +27,8 @@ void Battery::depleteBattery(){
 
 }
 
+//for testing battery functions
+/*
 int main(){
 
     Battery test;
@@ -43,3 +45,4 @@ int main(){
 
     return 0;
 }
+*/
