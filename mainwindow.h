@@ -22,6 +22,8 @@ private slots:
     void test1();
     void test2();
 
+    void edit_button();
+    void add_profile();
     void go_to_home();
     void test_lock();
     void test_log();
