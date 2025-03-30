@@ -291,4 +291,3 @@ void MainWindow::go_to_home(){
     std::cout << "HOME BUTTON"<<std::endl;
 
 }
-
