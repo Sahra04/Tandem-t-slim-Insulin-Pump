@@ -9,18 +9,21 @@ Battery::Battery(){
 
 }
 
+//returns current battery level
 int Battery::getBatteryLevel(){
 
     return batteryLevel;
 
 }
 
+//recharges battery to full
 void Battery::rechargeBattery(){
 
     batteryLevel = 100;
 
 }
 
+//deplete battery to low
 void Battery::depleteBattery(){
 
     batteryLevel = 30;
