@@ -11,12 +11,16 @@ CONFIG += c++11
 SOURCES += \
     Battery.cpp \
     Insulincartridge.cpp \
+    Userprofile.cpp \
+    Userprofilemanager.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Battery.h \
     Insulincartridge.h \
+    Userprofile.h \
+    Userprofilemanager.h \
     mainwindow.h
 
 FORMS += \
