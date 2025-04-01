@@ -1,4 +1,4 @@
-#include "Userprofilemanager.h"
+#include "userprofilemanager.h"
 
 
 //SB: Still in PROGRESS!

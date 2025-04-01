@@ -1,7 +1,7 @@
 #ifndef USERPROFILEMANAGER_H
 #define USERPROFILEMANAGER_H
 
-#include <Userprofile.h>
+#include <userprofile.h>
 #include <iostream>
 #include <string>
 #include <vector>

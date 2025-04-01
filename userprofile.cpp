@@ -1,4 +1,4 @@
-#include "Userprofile.h"
+#include "userprofile.h"
 
 UserProfile::UserProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
             double quickBolusUnits, bool isActivated )
