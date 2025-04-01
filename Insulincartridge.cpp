@@ -6,7 +6,7 @@ InsulinCartridge::InsulinCartridge(){
 }
 
 // Getter
-int InsulinCartridge::getInsulinLevel(){
+double InsulinCartridge::getInsulinLevel(){
     return insulinLevel;
 }
 

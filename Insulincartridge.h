@@ -9,7 +9,7 @@ class InsulinCartridge
         double insulinLevel;
     public:
         InsulinCartridge();
-        int getInsulinLevel();
+        double getInsulinLevel();
         void refillInsulin();
         void depleteInsulin(double amountToDeplete);
 

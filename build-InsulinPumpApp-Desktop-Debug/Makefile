@@ -55,11 +55,15 @@ OBJECTS_DIR   = ./
 SOURCES       = ../Battery.cpp \
 		../Insulincartridge.cpp \
 		../main.cpp \
-		../mainwindow.cpp moc_mainwindow.cpp
+		../mainwindow.cpp \
+		../UserProfile.cpp \
+		../UserProfileManager.cpp moc_mainwindow.cpp
 OBJECTS       = Battery.o \
 		Insulincartridge.o \
 		main.o \
 		mainwindow.o \
+		UserProfile.o \
+		UserProfileManager.o \
 		moc_mainwindow.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -141,10 +145,14 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../../InsulinPumpApp.pro ../Battery.h \
 		../Insulincartridge.h \
-		../mainwindow.h ../Battery.cpp \
+		../mainwindow.h \
+		../UserProfile.h \
+		../UserProfileManager.h ../Battery.cpp \
 		../Insulincartridge.cpp \
 		../main.cpp \
-		../mainwindow.cpp
+		../mainwindow.cpp \
+		../UserProfile.cpp \
+		../UserProfileManager.cpp
 QMAKE_TARGET  = InsulinPumpApp
 DESTDIR       = 
 TARGET        = InsulinPumpApp
@@ -330,8 +338,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../Battery.h ../Insulincartridge.h ../mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../Battery.cpp ../Insulincartridge.cpp ../main.cpp ../mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../Battery.h ../Insulincartridge.h ../mainwindow.h ../UserProfile.h ../UserProfileManager.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../Battery.cpp ../Insulincartridge.cpp ../main.cpp ../mainwindow.cpp ../UserProfile.cpp ../UserProfileManager.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../mainwindow.ui $(DISTDIR)/
 
 
@@ -405,6 +413,13 @@ main.o: ../main.cpp ../mainwindow.h
 mainwindow.o: ../mainwindow.cpp ../mainwindow.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../mainwindow.cpp
+
+UserProfile.o: ../UserProfile.cpp ../UserProfile.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o UserProfile.o ../UserProfile.cpp
+
+UserProfileManager.o: ../UserProfileManager.cpp ../UserProfileManager.h \
+		../UserProfile.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o UserProfileManager.o ../UserProfileManager.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
