@@ -11,7 +11,6 @@ CONFIG += c++11
 SOURCES += \
     Battery.cpp \
     Insulincartridge.cpp \
-    UserProfile.cpp \
     main.cpp \
     mainwindow.cpp \
     UserProfile.cpp \
