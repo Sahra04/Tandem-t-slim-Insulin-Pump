@@ -1014,6 +1014,38 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <string>Edit</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_49">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>330</y>
+        <width>261</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string>Insulin Duration</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="insulin_duration_textbox">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>330</y>
+        <width>261</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 221, 218);</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="bolus_screen" native="true">
      <property name="geometry">
@@ -1374,7 +1406,7 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <string notr="true">font: 12pt &quot;DejaVu Sans&quot;;</string>
       </property>
       <property name="text">
-       <string>Time Step:</string>
+       <string>Time:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1385,7 +1417,7 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <rect>
         <x>360</x>
         <y>20</y>
-        <width>61</width>
+        <width>91</width>
         <height>31</height>
        </rect>
       </property>
@@ -1393,7 +1425,7 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <string notr="true">font: 12pt &quot;DejaVu Sans&quot;;</string>
       </property>
       <property name="text">
-       <string>&lt; &gt;</string>
+       <string>&lt; 12:00 &gt;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1526,6 +1558,19 @@ background-color: rgb(119, 118, 123);</string>
       <string>B</string>
      </property>
     </widget>
+    <zorder>lock_screen</zorder>
+    <zorder>log_screen</zorder>
+    <zorder>personal_profiles_list_screen</zorder>
+    <zorder>current_status_screen</zorder>
+    <zorder>options_screen</zorder>
+    <zorder>setup_pin_screen</zorder>
+    <zorder>bolus_screen</zorder>
+    <zorder>battery</zorder>
+    <zorder>insulin_cartidge</zorder>
+    <zorder>home_button</zorder>
+    <zorder>current_status_button</zorder>
+    <zorder>personal_profile_screen</zorder>
+    <zorder>home_screen</zorder>
    </widget>
    <widget class="QPushButton" name="recharge_button">
     <property name="geometry">
