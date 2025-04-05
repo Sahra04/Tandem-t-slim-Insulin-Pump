@@ -1,7 +1,7 @@
 #include "UserProfile.h"
 
 UserProfile::UserProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
-            double quickBolusUnits, bool isActivated, int insulinDuration)
+            double quickBolusUnits, bool isActivated )
 {
 
     this->profileName = profileName;
@@ -11,7 +11,6 @@ UserProfile::UserProfile(string profileName, double basalRate, int carbRatio, in
     this->targetBGLevel = targetBGLevel;
     this->quickBolusUnits = quickBolusUnits;
     this->isActivated = isActivated;
-    this->insulinDuration = insulinDuration;
 
 
 };

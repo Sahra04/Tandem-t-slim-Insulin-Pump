@@ -10,7 +10,7 @@ class UserProfile
 {
     public:
         UserProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
-                    double quickBolusUnits, bool isActivated, int insulinDuration);
+                    double quickBolusUnits, bool isActivated );
 
         //getters:
         string getProfileName(){return profileName;}
@@ -20,12 +20,10 @@ class UserProfile
         double gettargetBGlevel(){return targetBGLevel; }
         double getquickBolusUnits(){return quickBolusUnits; }
         bool getIsActivated(){return isActivated; }
-        int getInsulinDuration() {return insulinDuration; }
-
 
         //setter:
         void setProfile(string nProfileName, double nBasalRate, int nCarbRatio, int nCorrectionFactor, double nTargetBGLevel,
-                        double nQuickBolusUnits, bool nIsActivated, int nInsulinDuration){
+                        double nQuickBolusUnits, bool nIsActivated ){
           profileName = nProfileName;
           basalRate = nBasalRate;
           carbRatio = nCarbRatio;
@@ -33,8 +31,6 @@ class UserProfile
           targetBGLevel = nTargetBGLevel;
           quickBolusUnits = nQuickBolusUnits;
           isActivated = nIsActivated;
-          insulinDuration = nInsulinDuration;
-
         };
 
 
@@ -48,7 +44,6 @@ class UserProfile
         double targetBGLevel;
         double quickBolusUnits;
         bool isActivated;
-        int insulinDuration;
 
 };
 
