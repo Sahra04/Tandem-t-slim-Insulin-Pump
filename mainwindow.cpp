@@ -36,7 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
      connect(ui->activate_profile_button, SIGNAL(released()), this, SLOT(activate_profile()));
-     connect(ui->personal_profiles_list, &QListWidget::itemClicked,this, &MainWindow::on_profile_item_clicked);
+     connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)),
+             this, SLOT(on_profile_item_clicked(QListWidgetItem*)));
 
 
 
@@ -368,4 +369,27 @@ void MainWindow::go_to_home(){
 
     std::cout << "HOME BUTTON"<<std::endl;
 
+}
+
+void MainWindow::on_profile_item_clicked(QListWidgetItem* item) {
+    std::string selectedProfileName = item->text().toStdString();
+
+    UserProfile* selectedProfile = profileManager.getprofile(selectedProfileName);
+
+    if (selectedProfile) {
+        ui->profile_name_textbox->setText(QString::fromStdString(selectedProfile->getProfileName()));
+        ui->basal_rate_textbox->setText(QString::number(selectedProfile->getBasalRate()));
+        ui->carb_ratio_textbox->setText(QString::number(selectedProfile->getCarbRatio()));
+        ui->correction_factor_textbox->setText(QString::number(selectedProfile->getCorrectionFactor()));
+        ui->quick_bolus_textbox->setText(QString::number(selectedProfile->getquickBolusUnits()));
+        ui->target_BG_textbox->setText(QString::number(selectedProfile->gettargetBGlevel()));
+
+        ui->edit_profile_button->setText("Save");
+        ui->profile_name_textbox->setReadOnly(true);
+        test_profile();  // Call any function to refresh UI if needed
+
+        std::cout << "Loaded profile: " << selectedProfileName << std::endl;
+    } else {
+        std::cerr << "Profile not found!" << std::endl;
+    }
 }
