@@ -45,12 +45,10 @@ private slots:
     void edit_button();
     void add_profile();
     void go_to_home();
-    void test_lock();
     void test_log();
     void test_profiles_list();
     void test_profile();
     void test_options();
-    void test_setup_pin();
     void test_current_status();
     void test_bolus();
     void delete_profile();

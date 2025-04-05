@@ -29,89 +29,6 @@
     <property name="styleSheet">
      <string notr="true">background-color: rgb(0, 0, 0);</string>
     </property>
-    <widget class="QWidget" name="lock_screen" native="true">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>691</width>
-       <height>411</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(119, 118, 123);</string>
-     </property>
-     <widget class="QPushButton" name="pin1_button">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>150</y>
-        <width>121</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(26, 95, 180);
-font: 36pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pin2_button">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>150</y>
-        <width>121</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(26, 95, 180);
-font: 36pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pin3_button">
-      <property name="geometry">
-       <rect>
-        <x>420</x>
-        <y>150</y>
-        <width>121</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(26, 95, 180);
-font: 36pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="submit_pin_button">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>300</y>
-        <width>83</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(38, 162, 105);</string>
-      </property>
-      <property name="text">
-       <string>OK</string>
-      </property>
-     </widget>
-    </widget>
     <widget class="QWidget" name="log_screen" native="true">
      <property name="geometry">
       <rect>
@@ -647,144 +564,6 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       </property>
       <property name="text">
        <string>Personal Profiles</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="setup_pin_screen_button">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>240</y>
-        <width>261</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(26, 95, 180);
-font: 75 20pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>Setup Pin</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="setup_pin_screen" native="true">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>691</width>
-       <height>411</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(119, 118, 123);</string>
-     </property>
-     <widget class="QLabel" name="label_8">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>30</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 75 20pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>Setup PIN</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="setup_pin1_button">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>160</y>
-        <width>131</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(26, 95, 180);
-font: 75 20pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="setup_pin2_button">
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>160</y>
-        <width>131</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(26, 95, 180);
-font: 75 20pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="setup_pin3_button">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>160</y>
-        <width>131</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(26, 95, 180);
-font: 75 20pt &quot;DejaVu Sans&quot;;</string>
-      </property>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="current_pin_label">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>90</y>
-        <width>301</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="submit_setup_pin_button">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>310</y>
-        <width>83</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(38, 162, 105);</string>
-      </property>
-      <property name="text">
-       <string>OK</string>
       </property>
      </widget>
     </widget>
@@ -1556,12 +1335,10 @@ background-color: rgb(119, 118, 123);</string>
     <zorder>insulin_cartidge</zorder>
     <zorder>home_button</zorder>
     <zorder>current_status_button</zorder>
-    <zorder>lock_screen</zorder>
     <zorder>log_screen</zorder>
     <zorder>personal_profiles_list_screen</zorder>
     <zorder>current_status_screen</zorder>
     <zorder>options_screen</zorder>
-    <zorder>setup_pin_screen</zorder>
     <zorder>personal_profile_screen</zorder>
     <zorder>bolus_screen</zorder>
     <zorder>home_screen</zorder>
@@ -1592,24 +1369,11 @@ background-color: rgb(119, 118, 123);</string>
      <string>Insulin Refill</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="test_lock_button">
-    <property name="geometry">
-     <rect>
-      <x>840</x>
-      <y>210</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Lock</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="test_log_button">
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>240</y>
+      <y>270</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -1622,7 +1386,7 @@ background-color: rgb(119, 118, 123);</string>
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>270</y>
+      <y>300</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -1648,7 +1412,7 @@ background-color: rgb(119, 118, 123);</string>
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>330</y>
+      <y>360</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -1657,24 +1421,11 @@ background-color: rgb(119, 118, 123);</string>
      <string>Options</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="test_setup_pin_button">
-    <property name="geometry">
-     <rect>
-      <x>840</x>
-      <y>360</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Setup PIN</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="test_profile_button">
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>300</y>
+      <y>330</y>
       <width>101</width>
       <height>31</height>
      </rect>

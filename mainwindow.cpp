@@ -21,12 +21,10 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->insulin_refill_button, SIGNAL(released()), this, SLOT(test2()));
 
 
-     connect(ui->test_lock_button, SIGNAL(released()), this, SLOT(test_lock()));
      connect(ui->test_log_button, SIGNAL(released()), this, SLOT(test_log()));
      connect(ui->test_profile_list_button, SIGNAL(released()), this, SLOT(test_profiles_list()));
      connect(ui->test_current_status_button, SIGNAL(released()), this, SLOT(test_current_status()));
      connect(ui->test_options_button, SIGNAL(released()), this, SLOT(test_options()));
-     connect(ui->test_setup_pin_button, SIGNAL(released()), this, SLOT(test_setup_pin()));
      connect(ui->test_profile_button, SIGNAL(released()), this, SLOT(test_profile()));
      connect(ui->test_bolus_button, SIGNAL(released()), this, SLOT(test_bolus()));
      connect(ui->home_button, SIGNAL(released()), this, SLOT(go_to_home()));
@@ -88,12 +86,10 @@ void MainWindow::power() {
     if (ui->power_button->text() == "Power Off") {
         ui->power_button->setText("Power On");
         ui->Device->setHidden(0);
-        ui->lock_screen->setHidden(1);
         ui->log_screen->setHidden(1);
         ui->personal_profiles_list_screen->setHidden(1);
         ui->current_status_screen->setHidden(1);
         ui->options_screen->setHidden(1);
-        ui->setup_pin_screen->setHidden(1);
         ui->personal_profile_screen->setHidden(1);
         ui->bolus_screen->setHidden(1);
         ui->home_screen->setHidden(1);
@@ -118,13 +114,10 @@ void MainWindow::power() {
 
 void MainWindow::go_to_options(){
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
     ui->current_status_screen->setHidden(0);
     ui->options_screen->setHidden(0);
-
-    ui->setup_pin_screen->setHidden(1);
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
@@ -143,31 +136,12 @@ void MainWindow::test2(){
 }
 
 
-void MainWindow::test_lock() {
-        ui->Device->setHidden(0);
-        ui->lock_screen->setHidden(0);
-
-        ui->log_screen->setHidden(1);
-        ui->personal_profiles_list_screen->setHidden(1);
-        ui->current_status_screen->setHidden(1);
-        ui->options_screen->setHidden(1);
-        ui->setup_pin_screen->setHidden(1);
-        ui->personal_profile_screen->setHidden(1);
-        ui->bolus_screen->setHidden(1);
-        ui->home_screen->setHidden(1);
-
-        std::cout << "LOCK BUTTON"<<std::endl;
-
-}
 void MainWindow::test_log() {
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
-
     ui->personal_profiles_list_screen->setHidden(1);
     ui->current_status_screen->setHidden(1);
     ui->options_screen->setHidden(1);
-    ui->setup_pin_screen->setHidden(1);
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
@@ -176,13 +150,10 @@ void MainWindow::test_log() {
 
 void MainWindow::test_profiles_list() {
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
-
     ui->current_status_screen->setHidden(1);
     ui->options_screen->setHidden(1);
-    ui->setup_pin_screen->setHidden(1);
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
@@ -197,13 +168,10 @@ void MainWindow::test_profiles_list() {
 }
 void MainWindow::test_current_status() {
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
     ui->current_status_screen->setHidden(0);
-
     ui->options_screen->setHidden(1);
-    ui->setup_pin_screen->setHidden(1);
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
@@ -212,45 +180,25 @@ void MainWindow::test_current_status() {
 
 void MainWindow::test_options() {
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
     ui->current_status_screen->setHidden(0);
     ui->options_screen->setHidden(0);
-
-    ui->setup_pin_screen->setHidden(1);
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
     std::cout << "OPTIONS BUTTON"<<std::endl;
 }
 
-void MainWindow::test_setup_pin() {
-    ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
-    ui->log_screen->setHidden(0);
-    ui->personal_profiles_list_screen->setHidden(0);
-    ui->current_status_screen->setHidden(0);
-    ui->options_screen->setHidden(0);
-    ui->setup_pin_screen->setHidden(0);
-
-    ui->personal_profile_screen->setHidden(1);
-    ui->bolus_screen->setHidden(1);
-    ui->home_screen->setHidden(1);
-    std::cout << "SETUP PIN BUTTON"<<std::endl;
-}
 
 void MainWindow::test_profile() {
     ui->profile_name_textbox->setReadOnly(true);
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
     ui->current_status_screen->setHidden(0);
     ui->options_screen->setHidden(0);
-    ui->setup_pin_screen->setHidden(0);
     ui->personal_profile_screen->setHidden(0);
-
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
     ui->edit_profile_button->setText("Save");
@@ -259,12 +207,10 @@ void MainWindow::test_profile() {
 
 void MainWindow::test_bolus()  {
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
     ui->current_status_screen->setHidden(0);
     ui->options_screen->setHidden(0);
-    ui->setup_pin_screen->setHidden(0);
     ui->personal_profile_screen->setHidden(0);
     ui->bolus_screen->setHidden(0);
 
@@ -275,14 +221,11 @@ void MainWindow::test_bolus()  {
 void MainWindow::add_profile(){
     ui->profile_name_textbox->setReadOnly(false);
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
     ui->current_status_screen->setHidden(0);
     ui->options_screen->setHidden(0);
-    ui->setup_pin_screen->setHidden(0);
     ui->personal_profile_screen->setHidden(0);
-
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
     ui->edit_profile_button->setText("Create");
@@ -334,7 +277,7 @@ void MainWindow::edit_button(){
         int insulinDuration = ui->insulin_duration_textbox->text().toInt();
 
         //UserProfileVector.updateProfile(basalRate, carrbRate,, corrrectionFactor, profileeName, quiickBolus,targetBG);
-        std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << std::endl;
+        std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << ", Insulin Duration: " << insulinDuration << std::endl;
 
         std::cout << "SAVE BUTTON" << std::endl;
 
@@ -351,12 +294,10 @@ void MainWindow::delete_profile(){
 
 void MainWindow::go_to_home(){
     ui->Device->setHidden(0);
-    ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
     ui->current_status_screen->setHidden(0);
     ui->options_screen->setHidden(0);
-    ui->setup_pin_screen->setHidden(0);
     ui->personal_profile_screen->setHidden(0);
     ui->bolus_screen->setHidden(0);
     ui->home_screen->setHidden(0);
