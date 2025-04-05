@@ -17,6 +17,22 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    int eventCount;
+    // has an InsulinPump object, like how it has pointer to UI
+
+    // the following 2 attributes would probably be stored in InsulinPump instead of here in MainWindow
+    // std::vector<double> bgValues; // Store all BG values
+    double currentBG = 7.0;
+
+    // Functions
+
+    void generateEvents();
+
+    double generateVeryLow();
+    double generateLow();
+    double generateNormal();
+    double generateHigh();
+    double generateVeryHigh();
 
 private slots:
     void test1();

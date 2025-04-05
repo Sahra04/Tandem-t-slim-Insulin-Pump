@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
+#include <cmath>   // for round()
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,7 +9,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    //ui->textbox1->setReadOnly(1);
+    // Set to how many BG values to be generated
+    eventCount = 24;
+
+    // Seed for randomly generating BG values
+    std::srand(std::time(0));
 
 
      connect(ui->recharge_button, SIGNAL(released()), this, SLOT(test1()));
@@ -40,7 +45,44 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::generateEvents(){
+
+}
+
+double MainWindow::generateVeryLow() {
+    return std::round((3.8 * std::rand() / RAND_MAX) * 10) / 10; // 0.0 - 3.8
+}
+
+double MainWindow::generateLow() {
+    return std::round((2.3 * std::rand() / RAND_MAX + 3.9) * 10) / 10; // 3.9 - 6.2
+}
+
+double MainWindow::generateNormal() {
+    return std::round((2.6 * std::rand() / RAND_MAX + 6.3) * 10) / 10; // 6.3 - 8.9
+}
+
+double MainWindow::generateHigh() {
+    return std::round((1.1 * std::rand() / RAND_MAX + 8.9) * 10) / 10; // 9.0 - 10.0
+}
+
+double MainWindow::generateVeryHigh() {
+    return std::round((5.0 * std::rand() / RAND_MAX + 10.0) * 10) / 10; // 10.1 - 15.0
+    // 15.0 was set as an upper bound, design choice
+}
+
 void MainWindow::power() {
+    double test = generateVeryLow();
+    std::cout << "generateVeryLow: " << test << std::endl;
+    test = generateLow();
+    std::cout << "generateLow: " << test << std::endl;
+    test = generateNormal();
+    std::cout << "generateNormal: " << test << std::endl;
+    test = generateHigh();
+    std::cout << "generateHigh: " << test << std::endl;
+    test = generateVeryHigh();
+    std::cout << "generateVeryHigh: " << test << std::endl;
+
     if (ui->power_button->text() == "Power Off") {
         ui->power_button->setText("Power On");
         ui->Device->setHidden(0);
