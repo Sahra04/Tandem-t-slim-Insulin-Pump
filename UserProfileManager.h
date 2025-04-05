@@ -22,6 +22,9 @@ class UserProfileManager
 
         vector<UserProfile*> userProfiles;
 
+        const std::vector<UserProfile*>& getAllProfiles() const;
+        void setActiveProfile(const std::string& profileName);
+
 
 
 

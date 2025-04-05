@@ -36,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
      connect(ui->activate_profile_button, SIGNAL(released()), this, SLOT(activate_profile()));
+     connect(ui->personal_profiles_list, &QListWidget::itemClicked,this, &MainWindow::on_profile_item_clicked);
+
 
 
 }
@@ -185,6 +187,13 @@ void MainWindow::test_profiles_list() {
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
     std::cout << "PERSONAL PROFILES LIST BUTTON"<<std::endl;
+
+    ui->personal_profiles_list->clear();
+
+    for (UserProfile* profile : profileManager.getAllProfiles()) {
+        QString profileName = QString::fromStdString(profile->getProfileName());
+        ui->personal_profiles_list->addItem(profileName);
+    }
 }
 void MainWindow::test_current_status() {
     ui->Device->setHidden(0);
@@ -232,6 +241,7 @@ void MainWindow::test_setup_pin() {
 }
 
 void MainWindow::test_profile() {
+    ui->profile_name_textbox->setReadOnly(true);
     ui->Device->setHidden(0);
     ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
@@ -263,6 +273,7 @@ void MainWindow::test_bolus()  {
 }
 
 void MainWindow::add_profile(){
+    ui->profile_name_textbox->setReadOnly(false);
     ui->Device->setHidden(0);
     ui->lock_screen->setHidden(0);
     ui->log_screen->setHidden(0);
@@ -276,27 +287,52 @@ void MainWindow::add_profile(){
     ui->home_screen->setHidden(1);
     ui->edit_profile_button->setText("Create");
     std::cout << "ADD PROFILE BUTTON"<<std::endl;
+
+    ui->personal_profiles_list->clear();
+
+    for (UserProfile* profile : profileManager.getAllProfiles()) {
+        QString profileName = QString::fromStdString(profile->getProfileName());
+        ui->personal_profiles_list->addItem(profileName);
+    }
 }
 
 void MainWindow::edit_button(){
     if (ui->edit_profile_button->text() == "Create") {
+        ui->profile_name_textbox->setReadOnly(false);
         int basalRate = ui->basal_rate_textbox->text().toInt();
         int carbRate = ui->basal_rate_textbox->text().toInt();
         int correctionFactor = ui->correction_factor_textbox->text().toInt();
         std::string profileName = ui->profile_name_textbox->text().toStdString();
         double quickBolus = ui->quick_bolus_textbox->text().toDouble();
         double targetBG = ui->target_BG_textbox->text().toDouble();
-        //UserProfileVector.createProfile(basalRate, carrbRate,, corrrectionFactor, profileeName, quiickBolus,targetBG);
+        int insulinDuration = ui->insulin_duration_textbox->text().toInt();
+
+        profileManager.createProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, true);
+        profileManager.setActiveProfile(profileName);
+
         std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << std::endl;
 
         std::cout << "CREATE BUTTON" << std::endl;
+
+        test_profiles_list();
+        // Clear the textboxes after profile creation
+        ui->profile_name_textbox->clear();
+        ui->basal_rate_textbox->clear();
+        ui->carb_ratio_textbox->clear();
+        ui->correction_factor_textbox->clear();
+        ui->quick_bolus_textbox->clear();
+        ui->target_BG_textbox->clear();
+        ui->insulin_duration_textbox->clear();
     } else{
+        ui->profile_name_textbox->setReadOnly(true);
         int basalRate = ui->basal_rate_textbox->text().toInt();
         int carbRate = ui->basal_rate_textbox->text().toInt();
         int correctionFactor = ui->correction_factor_textbox->text().toInt();
         std::string profileName = ui->profile_name_textbox->text().toStdString();
         double quickBolus = ui->quick_bolus_textbox->text().toDouble();
         double targetBG = ui->target_BG_textbox->text().toDouble();
+        int insulinDuration = ui->insulin_duration_textbox->text().toInt();
+
         //UserProfileVector.updateProfile(basalRate, carrbRate,, corrrectionFactor, profileeName, quiickBolus,targetBG);
         std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << std::endl;
 

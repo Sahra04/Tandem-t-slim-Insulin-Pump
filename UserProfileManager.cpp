@@ -63,3 +63,23 @@ UserProfile* UserProfileManager::getprofile(const string profileName){
     return returnUserProfile;
 
 }
+const std::vector<UserProfile*>& UserProfileManager::getAllProfiles() const {
+    return userProfiles;
+}
+
+void UserProfileManager::setActiveProfile(const std::string& profileName) {
+    for (UserProfile* profile : userProfiles) {
+
+        profile->setProfile(profile->getProfileName(), profile->getBasalRate(), profile->getCarbRatio(),
+                             profile->getCorrectionFactor(), profile->gettargetBGlevel(),
+                             profile->getquickBolusUnits(), profile->getInsulinDuration(), false);
+    }
+    for (UserProfile* profile : userProfiles) {
+        if (profile->getProfileName() == profileName) {
+            profile->setProfile(profile->getProfileName(), profile->getBasalRate(), profile->getCarbRatio(),
+                                 profile->getCorrectionFactor(), profile->gettargetBGlevel(),
+                                 profile->getquickBolusUnits(),profile->getInsulinDuration(), true);
+            break;
+        }
+    }
+}

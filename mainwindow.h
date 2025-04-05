@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "UserProfile.h"
+#include "UserProfileManager.h"
+#include <QListWidgetItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -33,6 +36,7 @@ private:
     double generateNormal();
     double generateHigh();
     double generateVeryHigh();
+    UserProfileManager profileManager;
 
 private slots:
     void test1();
@@ -53,6 +57,7 @@ private slots:
     void go_to_options();
     void power();
     void activate_profile();
+    void on_profile_item_clicked(QListWidgetItem* item);
 
 
 };
