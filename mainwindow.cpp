@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
      connect(ui->activate_profile_button, SIGNAL(released()), this, SLOT(activate_profile()));
      connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)),
-             this, SLOT(on_profile_item_clicked(QListWidgetItem*)));
+             this, SLOT(profile_item_clicked(QListWidgetItem*)));
 
 
 
@@ -371,7 +371,7 @@ void MainWindow::go_to_home(){
 
 }
 
-void MainWindow::on_profile_item_clicked(QListWidgetItem* item) {
+void MainWindow::profile_item_clicked(QListWidgetItem* item) {
     std::string selectedProfileName = item->text().toStdString();
 
     UserProfile* selectedProfile = profileManager.getprofile(selectedProfileName);

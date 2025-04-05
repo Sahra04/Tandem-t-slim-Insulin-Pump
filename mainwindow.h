@@ -57,7 +57,7 @@ private slots:
     void go_to_options();
     void power();
     void activate_profile();
-    void on_profile_item_clicked(QListWidgetItem* item);
+    void profile_item_clicked(QListWidgetItem* item);
 
 
 };
