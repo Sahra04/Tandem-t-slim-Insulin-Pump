@@ -217,6 +217,16 @@ font: 36pt &quot;DejaVu Sans&quot;;</string>
        <string>+</string>
       </property>
      </widget>
+     <widget class="QComboBox" name="activateDropdown">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>20</y>
+        <width>86</width>
+        <height>25</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="current_status_screen" native="true">
      <property name="geometry">
@@ -982,22 +992,6 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <string>Delete</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="activate_profile_button">
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>370</y>
-        <width>111</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(38, 162, 105);</string>
-      </property>
-      <property name="text">
-       <string>Activate</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="edit_profile_button">
       <property name="geometry">
        <rect>
@@ -1558,18 +1552,18 @@ background-color: rgb(119, 118, 123);</string>
       <string>B</string>
      </property>
     </widget>
+    <zorder>battery</zorder>
+    <zorder>insulin_cartidge</zorder>
+    <zorder>home_button</zorder>
+    <zorder>current_status_button</zorder>
     <zorder>lock_screen</zorder>
     <zorder>log_screen</zorder>
     <zorder>personal_profiles_list_screen</zorder>
     <zorder>current_status_screen</zorder>
     <zorder>options_screen</zorder>
     <zorder>setup_pin_screen</zorder>
-    <zorder>bolus_screen</zorder>
-    <zorder>battery</zorder>
-    <zorder>insulin_cartidge</zorder>
-    <zorder>home_button</zorder>
-    <zorder>current_status_button</zorder>
     <zorder>personal_profile_screen</zorder>
+    <zorder>bolus_screen</zorder>
     <zorder>home_screen</zorder>
    </widget>
    <widget class="QPushButton" name="recharge_button">

@@ -35,7 +35,6 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->personal_profiles_list_add_button, SIGNAL(released()), this, SLOT(add_profile()));
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
-     connect(ui->activate_profile_button, SIGNAL(released()), this, SLOT(activate_profile()));
      connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)),
              this, SLOT(profile_item_clicked(QListWidgetItem*)));
 
@@ -349,11 +348,6 @@ void MainWindow::delete_profile(){
     std::cout << "DELETE BUTTON" << std::endl;
 }
 
-void MainWindow::activate_profile(){
-    std::string profileName = ui->profile_name_textbox->text().toStdString();
-    //UserProfileVector.activate_profile(profileeName);
-    std::cout << "ACTIVATE BUTTON" << std::endl;
-}
 
 void MainWindow::go_to_home(){
     ui->Device->setHidden(0);
