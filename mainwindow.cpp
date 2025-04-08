@@ -26,16 +26,17 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->test_current_status_button, SIGNAL(released()), this, SLOT(test_current_status()));
      connect(ui->test_options_button, SIGNAL(released()), this, SLOT(test_options()));
      connect(ui->test_profile_button, SIGNAL(released()), this, SLOT(test_profile()));
-     connect(ui->test_bolus_button, SIGNAL(released()), this, SLOT(test_bolus()));
+     connect(ui->test_bolus_button, SIGNAL(released()), this, SLOT(go_to_bolus()));
      connect(ui->home_button, SIGNAL(released()), this, SLOT(go_to_home()));
      connect(ui->home_options_button, SIGNAL(released()), this, SLOT(go_to_options()));
      connect(ui->power_button, SIGNAL(released()), this, SLOT(power()));
      connect(ui->personal_profiles_list_add_button, SIGNAL(released()), this, SLOT(add_profile()));
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
-     connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)),
-             this, SLOT(profile_item_clicked(QListWidgetItem*)));
+     connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(profile_item_clicked(QListWidgetItem*)));
 
+     connect(ui->home_bolus_button, SIGNAL(released()), this, SLOT(go_to_bolus()));
+     connect(ui->extended_radio_button, SIGNAL(toggled(bool)), this, SLOT(setExtended()));
 
 
 }
@@ -205,7 +206,7 @@ void MainWindow::test_profile() {
     std::cout << "PERSONAL PROFILE BUTTON"<<std::endl;
 }
 
-void MainWindow::test_bolus()  {
+void MainWindow::go_to_bolus()  {
     ui->Device->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
@@ -326,5 +327,19 @@ void MainWindow::profile_item_clicked(QListWidgetItem* item) {
         std::cout << "Loaded profile: " << selectedProfileName << std::endl;
     } else {
         std::cerr << "Profile not found!" << std::endl;
+    }
+}
+
+// Allows user to enter the input for extended bolus only if radio button is checked
+void MainWindow::setExtended() {
+    if (ui->extended_radio_button->isChecked()) {
+        ui->bolus_insulin_duration_textbox->setReadOnly(false);
+        ui->bolus_deliver_now_textbox->setReadOnly(false);
+    } else {
+        ui->bolus_insulin_duration_textbox->setReadOnly(true);
+        ui->bolus_deliver_now_textbox->setReadOnly(true);
+        ui->bolus_insulin_duration_textbox->setText("");
+        ui->bolus_deliver_now_textbox->setText("");
+
     }
 }

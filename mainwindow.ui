@@ -892,7 +892,7 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QLabel" name="bolus_target_BG_label">
+     <widget class="QLabel" name="bolus_deliver_now_label">
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -905,7 +905,7 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <string notr="true">background-color: rgb(222, 221, 218);</string>
       </property>
       <property name="text">
-       <string>Target Blood Glucose Level</string>
+       <string>Deliver Now %</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -996,8 +996,11 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
-     <widget class="QLineEdit" name="bolus_target_BG_textbox">
+     <widget class="QLineEdit" name="bolus_deliver_now_textbox">
       <property name="geometry">
        <rect>
         <x>360</x>
@@ -1011,6 +1014,9 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QLabel" name="label_24">

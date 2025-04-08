@@ -50,11 +50,12 @@ private slots:
     void test_profile();
     void test_options();
     void test_current_status();
-    void test_bolus();
+    void go_to_bolus();
     void delete_profile();
     void go_to_options();
     void power();
     void profile_item_clicked(QListWidgetItem* item);
+    void setExtended();
 
 
 };
