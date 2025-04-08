@@ -38,7 +38,7 @@ private:
     double generateNormal();
     double generateHigh();
     double generateVeryHigh();
-    UserProfileManager profileManager;
+    //UserProfileManager profileManager;
 
 private slots:
     void test1();

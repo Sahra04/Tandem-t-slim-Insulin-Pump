@@ -17,3 +17,7 @@ double InsulinPumpDevice::getCurrentBG(){
 void InsulinPumpDevice::setCurrentBG(double currentBloodGlucose){
     currentBG = currentBloodGlucose;
 }
+
+UserProfileManager* InsulinPumpDevice::getUserProfileManager(){
+    return userProfileManager;
+}

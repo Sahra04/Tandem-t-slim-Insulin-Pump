@@ -186,7 +186,8 @@ void MainWindow::test_profiles_list() {
 
     ui->personal_profiles_list->clear();
 
-    for (UserProfile* profile : profileManager.getAllProfiles()) {
+    //for (UserProfile* profile : profileManager.getAllProfiles()) {
+    for (UserProfile* profile : device->getUserProfileManager()->getAllProfiles()) {
         QString profileName = QString::fromStdString(profile->getProfileName());
         ui->personal_profiles_list->addItem(profileName);
     }
@@ -260,7 +261,8 @@ void MainWindow::add_profile(){
 
     ui->personal_profiles_list->clear();
 
-    for (UserProfile* profile : profileManager.getAllProfiles()) {
+    //for (UserProfile* profile : profileManager.getAllProfiles()) {
+    for (UserProfile* profile : device->getUserProfileManager()->getAllProfiles()) {
         QString profileName = QString::fromStdString(profile->getProfileName());
         ui->personal_profiles_list->addItem(profileName);
     }
@@ -277,8 +279,10 @@ void MainWindow::edit_button(){
         double targetBG = ui->target_BG_textbox->text().toDouble();
         int insulinDuration = ui->insulin_duration_textbox->text().toInt();
 
-        profileManager.createProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, true);
-        profileManager.setActiveProfile(profileName);
+        //profileManager.createProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, true);
+        device->getUserProfileManager()->createProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, true);
+        //profileManager.setActiveProfile(profileName);
+        device->getUserProfileManager()->setActiveProfile(profileName);
 
         std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << std::endl;
 
@@ -336,7 +340,8 @@ void MainWindow::go_to_home(){
 void MainWindow::profile_item_clicked(QListWidgetItem* item) {
     std::string selectedProfileName = item->text().toStdString();
 
-    UserProfile* selectedProfile = profileManager.getprofile(selectedProfileName);
+    //UserProfile* selectedProfile = profileManager.getprofile(selectedProfileName);
+    UserProfile* selectedProfile = device->getUserProfileManager()->getprofile(selectedProfileName);
 
     if (selectedProfile) {
         ui->profile_name_textbox->setText(QString::fromStdString(selectedProfile->getProfileName()));

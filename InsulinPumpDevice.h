@@ -9,6 +9,7 @@ public:
     ~InsulinPumpDevice();
     double getCurrentBG();
     void setCurrentBG(double currentBloodGlucose);
+    UserProfileManager* getUserProfileManager();
 
 private:
     double currentBG;
