@@ -3,8 +3,12 @@
 InsulinPumpDevice::InsulinPumpDevice(double currentBloodGlucose)
 {
     currentBG = currentBloodGlucose;
+    userProfileManager = new UserProfileManager();
 }
 
+InsulinPumpDevice::~InsulinPumpDevice(){
+    delete userProfileManager;
+}
 
 double InsulinPumpDevice::getCurrentBG(){
     return currentBG;

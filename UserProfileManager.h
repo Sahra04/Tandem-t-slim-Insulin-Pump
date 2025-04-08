@@ -20,14 +20,11 @@ class UserProfileManager
                            double quickBolusUnits, bool isActivated, int insulinDuration);
         UserProfile* getprofile(const string profileName);
 
-        vector<UserProfile*> userProfiles;
-
         const std::vector<UserProfile*>& getAllProfiles() const;
         void setActiveProfile(const std::string& profileName);
+        UserProfile* getActiveProfile();
 
-
-
-
+        vector<UserProfile*> userProfiles;
 
 };
 

@@ -83,3 +83,12 @@ void UserProfileManager::setActiveProfile(const std::string& profileName) {
         }
     }
 }
+
+UserProfile* UserProfileManager::getActiveProfile(){
+    for (UserProfile* profile : userProfiles) {
+        if (profile->getIsActivated()) {
+            return profile;
+        }
+    }
+    return nullptr;
+}
