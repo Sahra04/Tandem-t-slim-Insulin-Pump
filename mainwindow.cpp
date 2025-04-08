@@ -20,24 +20,32 @@ MainWindow::MainWindow(QWidget *parent)
 
      connect(ui->insulin_refill_button, SIGNAL(released()), this, SLOT(test2()));
 
-
+     // For testing only
      connect(ui->test_log_button, SIGNAL(released()), this, SLOT(test_log()));
      connect(ui->test_profile_list_button, SIGNAL(released()), this, SLOT(test_profiles_list()));
      connect(ui->test_current_status_button, SIGNAL(released()), this, SLOT(test_current_status()));
      connect(ui->test_options_button, SIGNAL(released()), this, SLOT(test_options()));
      connect(ui->test_profile_button, SIGNAL(released()), this, SLOT(test_profile()));
      connect(ui->test_bolus_button, SIGNAL(released()), this, SLOT(go_to_bolus()));
+
+    // Home related signals and slots
      connect(ui->home_button, SIGNAL(released()), this, SLOT(go_to_home()));
      connect(ui->home_options_button, SIGNAL(released()), this, SLOT(go_to_options()));
+     connect(ui->home_bolus_button, SIGNAL(released()), this, SLOT(go_to_bolus()));
      connect(ui->power_button, SIGNAL(released()), this, SLOT(power()));
+
+     // Profile related signals and slots
      connect(ui->personal_profiles_list_add_button, SIGNAL(released()), this, SLOT(add_profile()));
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
      connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(profile_item_clicked(QListWidgetItem*)));
 
-     connect(ui->home_bolus_button, SIGNAL(released()), this, SLOT(go_to_bolus()));
+     // Bolus related signals and slots
      connect(ui->extended_radio_button, SIGNAL(toggled(bool)), this, SLOT(setExtended()));
-
+     connect(ui->extended_radio_button, SIGNAL(toggled(bool)), this, SLOT(setExtended()));
+     connect(ui->bolus_ok_button, SIGNAL(released()), this, SLOT(submitBolusInfo()));
+     //connect(ui->bolus_current_BG_textbox);
+     ui->bolus_current_BG_textbox->text();
 
 }
 
@@ -232,6 +240,8 @@ void MainWindow::go_to_bolus()  {
     ui->bolus_screen->setHidden(0);
 
     ui->home_screen->setHidden(1);
+    // Sets current BG
+    ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
     std::cout << "BOLUS BUTTON"<<std::endl;
 }
 
@@ -357,5 +367,26 @@ void MainWindow::setExtended() {
         ui->bolus_insulin_duration_textbox->setText("");
         ui->bolus_deliver_now_textbox->setText("");
 
+    }
+}
+
+void MainWindow::submitBolusInfo()  {
+    double currentBloodGlucose = ui->bolus_current_BG_textbox->text().toDouble();
+    int carbIntake = ui->bolus_carb_intake_textbox->text().toDouble();
+    double insulinDose = ui->bolus_insulin_dose_textbox->text().toDouble();
+
+    std::cout << "Current BG: " << currentBloodGlucose << std::endl;
+    std::cout << "Carb Intake: " << carbIntake << std::endl;
+    std::cout << "Insulin Dose: " << insulinDose << std::endl;
+
+    if(ui->extended_radio_button->isChecked()){
+        std::cout << "Extended selected\n" << std::endl;
+        int deliverNow = ui->bolus_deliver_now_textbox->text().toInt();
+        int duration = ui->bolus_insulin_duration_textbox->text().toInt();
+        std::cout << "Deliver now: " << deliverNow << std::endl;
+        std::cout << "Insulin Duration: " << duration << std::endl;
+
+    } else {
+        std::cout << "Default selected\n" << std::endl;
     }
 }

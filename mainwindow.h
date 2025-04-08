@@ -58,6 +58,7 @@ private slots:
     void power();
     void profile_item_clicked(QListWidgetItem* item);
     void setExtended();
+    void submitBolusInfo();
 
 
 };
