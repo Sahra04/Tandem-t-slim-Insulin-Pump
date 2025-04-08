@@ -10,7 +10,7 @@ class UserProfile
 {
     public:
         UserProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
-                    double quickBolusUnits, bool isActivated, int insulinDuration);
+                    double quickBolusUnits, int insulinDuration, bool isActivated);
 
         //getters:
         string getProfileName(){return profileName;}
@@ -25,7 +25,7 @@ class UserProfile
 
         //setter:
         void setProfile(string nProfileName, double nBasalRate, int nCarbRatio, int nCorrectionFactor, double nTargetBGLevel,
-                        double nQuickBolusUnits, bool nIsActivated, int nInsulinDuration){
+                        double nQuickBolusUnits, int nInsulinDuration, bool nIsActivated){
           profileName = nProfileName;
           basalRate = nBasalRate;
           carbRatio = nCarbRatio;
@@ -34,6 +34,7 @@ class UserProfile
           quickBolusUnits = nQuickBolusUnits;
           isActivated = nIsActivated;
           insulinDuration = nInsulinDuration;
+          std::cout << "UserProfile: setProfile" << std::endl;
 
         };
 

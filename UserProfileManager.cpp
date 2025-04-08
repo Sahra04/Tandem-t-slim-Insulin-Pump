@@ -11,10 +11,10 @@ UserProfileManager::UserProfileManager()
 
 //when profile is created, it is added to the vector
 void UserProfileManager::createProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
-                                       double quickBolusUnits, bool isActivated, int insulinDuration){
+                                       double quickBolusUnits, int insulinDuration, bool isActivated){
 
    UserProfile* newUserProfile = new UserProfile(profileName, basalRate, carbRatio, correctionFactor, targetBGLevel,
-                                         quickBolusUnits, isActivated, insulinDuration);
+                                         quickBolusUnits, insulinDuration, isActivated);
 
    userProfiles.push_back(newUserProfile);
 }
@@ -35,15 +35,17 @@ void UserProfileManager::deleteProfile(const string profileName){
 
 //update profile
 void UserProfileManager::updateProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
-                                       double quickBolusUnits, bool isActivated, int insulinDuration){
+                                       double quickBolusUnits, int insulinDuration, bool isActivated){
 
     for(int i = 0; i < userProfiles.size(); i++){
         if(userProfiles[i]->getProfileName().compare(profileName) == 0){
                     userProfiles[i]->setProfile(profileName, basalRate, carbRatio, correctionFactor, targetBGLevel,
-                                                quickBolusUnits, isActivated, insulinDuration);
+                                                quickBolusUnits, insulinDuration, isActivated);
 
         }
     }
+
+    std::cout << "UserProfileManager: updateProfile" << std::endl;
 
 }
 
@@ -78,7 +80,7 @@ void UserProfileManager::setActiveProfile(const std::string& profileName) {
         if (profile->getProfileName() == profileName) {
             profile->setProfile(profile->getProfileName(), profile->getBasalRate(), profile->getCarbRatio(),
                                  profile->getCorrectionFactor(), profile->gettargetBGlevel(),
-                                 profile->getquickBolusUnits(),profile->getInsulinDuration(), true);
+                                 profile->getquickBolusUnits(), profile->getInsulinDuration(), true);
             break;
         }
     }
@@ -92,3 +94,4 @@ UserProfile* UserProfileManager::getActiveProfile(){
     }
     return nullptr;
 }
+

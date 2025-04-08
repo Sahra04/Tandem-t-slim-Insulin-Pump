@@ -14,10 +14,10 @@ class UserProfileManager
         UserProfileManager();
 
         void createProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
-                           double quickBolusUnits, bool isActivated, int insulinDuration);
+                           double quickBolusUnits, int insulinDuration, bool isActivated);
         void deleteProfile(const string profileName);
         void updateProfile(string profileName, double basalRate, int carbRatio, int correctionFactor, double targetBGLevel,
-                           double quickBolusUnits, bool isActivated, int insulinDuration);
+                           double quickBolusUnits, int insulinDuration, bool isActivated);
         UserProfile* getprofile(const string profileName);
 
         const std::vector<UserProfile*>& getAllProfiles() const;

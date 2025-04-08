@@ -247,6 +247,7 @@ void MainWindow::go_to_bolus()  {
 }
 
 void MainWindow::add_profile(){
+    std::cout << "mainwindow: add_profile" << std::endl;
     ui->profile_name_textbox->setReadOnly(false);
     ui->Device->setHidden(0);
     ui->log_screen->setHidden(0);
@@ -269,10 +270,12 @@ void MainWindow::add_profile(){
 }
 
 void MainWindow::edit_button(){
+    std::cout << "mainwindow: edit_button" << std::endl;
     if (ui->edit_profile_button->text() == "Create") {
+        std::cout << "mainwindow: add_profile: CREATE" << std::endl;
         ui->profile_name_textbox->setReadOnly(false);
         int basalRate = ui->basal_rate_textbox->text().toInt();
-        int carbRate = ui->basal_rate_textbox->text().toInt();
+        int carbRate = ui->carb_ratio_textbox->text().toInt();
         int correctionFactor = ui->correction_factor_textbox->text().toInt();
         std::string profileName = ui->profile_name_textbox->text().toStdString();
         double quickBolus = ui->quick_bolus_textbox->text().toDouble();
@@ -286,7 +289,7 @@ void MainWindow::edit_button(){
 
         std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << std::endl;
 
-        std::cout << "CREATE BUTTON" << std::endl;
+        //std::cout << "CREATE BUTTON" << std::endl;
 
         test_profiles_list();
         // Clear the textboxes after profile creation
@@ -298,22 +301,35 @@ void MainWindow::edit_button(){
         ui->target_BG_textbox->clear();
         ui->insulin_duration_textbox->clear();
     } else{
+        std::cout << "mainwindow: add_profile: SAVE" << std::endl;
         ui->profile_name_textbox->setReadOnly(true);
         int basalRate = ui->basal_rate_textbox->text().toInt();
-        int carbRate = ui->basal_rate_textbox->text().toInt();
+        int carbRate = ui->carb_ratio_textbox->text().toInt();
         int correctionFactor = ui->correction_factor_textbox->text().toInt();
         std::string profileName = ui->profile_name_textbox->text().toStdString();
         double quickBolus = ui->quick_bolus_textbox->text().toDouble();
         double targetBG = ui->target_BG_textbox->text().toDouble();
         int insulinDuration = ui->insulin_duration_textbox->text().toInt();
 
+
+        device->getUserProfileManager()->updateProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, false);
         //UserProfileVector.updateProfile(basalRate, carrbRate,, corrrectionFactor, profileeName, quiickBolus,targetBG);
         std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << ", Insulin Duration: " << insulinDuration << std::endl;
 
-        std::cout << "SAVE BUTTON" << std::endl;
+        //std::cout << "SAVE BUTTON" << std::endl;
+
+        test_profiles_list();
+        // Clear the textboxes after saving profile
+        ui->profile_name_textbox->clear();
+        ui->basal_rate_textbox->clear();
+        ui->carb_ratio_textbox->clear();
+        ui->correction_factor_textbox->clear();
+        ui->quick_bolus_textbox->clear();
+        ui->target_BG_textbox->clear();
+        ui->insulin_duration_textbox->clear();
 
     }
-    ui->edit_profile_button->setText("Save");
+    //ui->edit_profile_button->setText("Save");
 }
 
 void MainWindow::delete_profile(){
@@ -350,6 +366,7 @@ void MainWindow::profile_item_clicked(QListWidgetItem* item) {
         ui->correction_factor_textbox->setText(QString::number(selectedProfile->getCorrectionFactor()));
         ui->quick_bolus_textbox->setText(QString::number(selectedProfile->getquickBolusUnits()));
         ui->target_BG_textbox->setText(QString::number(selectedProfile->gettargetBGlevel()));
+        ui->insulin_duration_textbox->setText(QString::number(selectedProfile->getInsulinDuration()));
 
         ui->edit_profile_button->setText("Save");
         ui->profile_name_textbox->setReadOnly(true);

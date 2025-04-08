@@ -566,6 +566,42 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
        <string>Personal Profiles</string>
       </property>
      </widget>
+     <widget class="QCheckBox" name="cgm_checkBox">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>240</y>
+        <width>211</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>CGM MODE</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="control_IQ_checkBox">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>300</y>
+        <width>211</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>CONTROL IQ MODE</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="personal_profile_screen" native="true">
      <property name="geometry">
