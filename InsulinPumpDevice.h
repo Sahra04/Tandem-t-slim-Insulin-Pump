@@ -10,10 +10,17 @@ public:
     double getCurrentBG();
     void setCurrentBG(double currentBloodGlucose);
     UserProfileManager* getUserProfileManager();
+    bool getCgmMode();
+    void setCgmMode(bool val);
+    bool getControlIQMode();
+    void setControlIQMode(bool val);
+
 
 private:
     double currentBG;
     UserProfileManager* userProfileManager;
+    bool cgmMode;
+    bool controlIQMode;
 };
 
 #endif // INSULINPUMPDEVICE_H

@@ -4,6 +4,8 @@ InsulinPumpDevice::InsulinPumpDevice(double currentBloodGlucose)
 {
     currentBG = currentBloodGlucose;
     userProfileManager = new UserProfileManager();
+    cgmMode = true;
+    controlIQMode = false;
 }
 
 InsulinPumpDevice::~InsulinPumpDevice(){
@@ -20,4 +22,19 @@ void InsulinPumpDevice::setCurrentBG(double currentBloodGlucose){
 
 UserProfileManager* InsulinPumpDevice::getUserProfileManager(){
     return userProfileManager;
+}
+
+bool InsulinPumpDevice::getCgmMode(){
+    return cgmMode;
+}
+void InsulinPumpDevice::setCgmMode(bool val){
+    cgmMode = val;
+    std::cout << "CGM Mode: " << cgmMode << std::endl;
+}
+bool InsulinPumpDevice::getControlIQMode(){
+    return controlIQMode;
+}
+void InsulinPumpDevice::setControlIQMode(bool val){
+    controlIQMode = val;
+    std::cout << "Control IQ Mode: " << controlIQMode << std::endl;
 }

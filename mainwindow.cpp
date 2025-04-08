@@ -47,6 +47,10 @@ MainWindow::MainWindow(QWidget *parent)
      //connect(ui->bolus_current_BG_textbox);
      ui->bolus_current_BG_textbox->text();
 
+     connect(ui->control_IQ_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setControlIQMode()));
+     connect(ui->cgm_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setCgmMode()));
+
+
 }
 
 MainWindow::~MainWindow()
@@ -241,8 +245,11 @@ void MainWindow::go_to_bolus()  {
     ui->bolus_screen->setHidden(0);
 
     ui->home_screen->setHidden(1);
-    // Sets current BG
-    ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
+    // Sets current BG if CGM mode is on:
+    if (device->getCgmMode()){
+        ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
+    }
+
     std::cout << "BOLUS BUTTON"<<std::endl;
 }
 
@@ -423,4 +430,11 @@ void MainWindow::submitBolusInfo()  {
     } else {
         std::cout << "Default selected\n" << std::endl;
     }
+}
+
+void MainWindow::setCgmMode(){
+    device->setCgmMode(ui->cgm_checkBox->isChecked());
+}
+void MainWindow::setControlIQMode(){
+    device->setControlIQMode(ui->control_IQ_checkBox->isChecked());
 }

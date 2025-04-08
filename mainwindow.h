@@ -59,6 +59,8 @@ private slots:
     void profile_item_clicked(QListWidgetItem* item);
     void setExtended();
     void submitBolusInfo();
+    void setControlIQMode();
+    void setCgmMode();
 
 
 };
