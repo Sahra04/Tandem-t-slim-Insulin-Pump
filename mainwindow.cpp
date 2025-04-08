@@ -336,6 +336,18 @@ void MainWindow::delete_profile(){
     std::string profileName = ui->profile_name_textbox->text().toStdString();
     //UserProfileVector.deleteProfile(profileeName);
     std::cout << "DELETE BUTTON" << std::endl;
+    device->getUserProfileManager()->deleteProfile(profileName);
+
+    test_profiles_list();
+    // Clear the textboxes after saving profile
+    ui->profile_name_textbox->clear();
+    ui->basal_rate_textbox->clear();
+    ui->carb_ratio_textbox->clear();
+    ui->correction_factor_textbox->clear();
+    ui->quick_bolus_textbox->clear();
+    ui->target_BG_textbox->clear();
+    ui->insulin_duration_textbox->clear();
+
 }
 
 
