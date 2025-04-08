@@ -5,6 +5,7 @@
 #include "UserProfile.h"
 #include "UserProfileManager.h"
 #include <QListWidgetItem>
+#include "InsulinPumpDevice.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,6 +21,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    InsulinPumpDevice *device;
     int eventCount;
     // has an InsulinPump object, like how it has pointer to UI
 

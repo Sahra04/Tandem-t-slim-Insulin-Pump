@@ -5,7 +5,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0))
 {
     ui->setupUi(this);
 
@@ -52,24 +52,40 @@ void MainWindow::generateEvents(){
 }
 
 double MainWindow::generateVeryLow() {
-    return std::round((3.8 * std::rand() / RAND_MAX) * 10) / 10; // 0.0 - 3.8
+    double newBG = std::round((3.8 * std::rand() / RAND_MAX) * 10) / 10; // 0.0 - 3.8
+    //return std::round((3.8 * std::rand() / RAND_MAX) * 10) / 10; // 0.0 - 3.8
+    device->setCurrentBG(newBG);
+    return newBG;
 }
 
 double MainWindow::generateLow() {
-    return std::round((2.3 * std::rand() / RAND_MAX + 3.9) * 10) / 10; // 3.9 - 6.2
+    double newBG = std::round((2.3 * std::rand() / RAND_MAX + 3.9) * 10) / 10; // 3.9 - 6.2
+    //return std::round((2.3 * std::rand() / RAND_MAX + 3.9) * 10) / 10; // 3.9 - 6.2
+    device->setCurrentBG(newBG);
+    return newBG;
 }
 
 double MainWindow::generateNormal() {
-    return std::round((2.6 * std::rand() / RAND_MAX + 6.3) * 10) / 10; // 6.3 - 8.9
+    double newBG = std::round((2.6 * std::rand() / RAND_MAX + 6.3) * 10) / 10; // 6.3 - 8.9
+    //return std::round((2.6 * std::rand() / RAND_MAX + 6.3) * 10) / 10; // 6.3 - 8.9
+    device->setCurrentBG(newBG);
+    return newBG;
 }
 
 double MainWindow::generateHigh() {
-    return std::round((1.1 * std::rand() / RAND_MAX + 8.9) * 10) / 10; // 9.0 - 10.0
+    double newBG = std::round((1.1 * std::rand() / RAND_MAX + 8.9) * 10) / 10; // 9.0 - 10.0
+    //return std::round((1.1 * std::rand() / RAND_MAX + 8.9) * 10) / 10; // 9.0 - 10.0
+    device->setCurrentBG(newBG);
+    return newBG;
 }
 
 double MainWindow::generateVeryHigh() {
-    return std::round((5.0 * std::rand() / RAND_MAX + 10.0) * 10) / 10; // 10.1 - 15.0
     // 15.0 was set as an upper bound, design choice
+
+    double newBG = std::round((5.0 * std::rand() / RAND_MAX + 10.0) * 10) / 10; // 10.1 - 15.0
+    //return std::round((5.0 * std::rand() / RAND_MAX + 10.0) * 10) / 10; // 10.1 - 15.0
+    device->setCurrentBG(newBG);
+    return newBG;
 }
 
 void MainWindow::power() {

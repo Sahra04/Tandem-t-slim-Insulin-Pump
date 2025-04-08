@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     Battery.cpp \
+    InsulinPumpDevice.cpp \
     Insulincartridge.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     Battery.h \
+    InsulinPumpDevice.h \
     Insulincartridge.h \
     mainwindow.h \
     UserProfile.h \
