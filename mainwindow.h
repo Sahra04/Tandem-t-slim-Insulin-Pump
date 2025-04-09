@@ -61,6 +61,8 @@ private slots:
     void submitBolusInfo();
     void setControlIQMode();
     void setCgmMode();
+    void populateActivateDropdown();
+    void ActivateProfileClicked(const QModelIndex &index);
 
 
 };

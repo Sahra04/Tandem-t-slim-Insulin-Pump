@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
      connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(profile_item_clicked(QListWidgetItem*)));
+     connect(ui->activateDropdown->view(), &QAbstractItemView::pressed,this, &MainWindow::ActivateProfileClicked);
 
      // Bolus related signals and slots
      connect(ui->extended_radio_button, SIGNAL(toggled(bool)), this, SLOT(setExtended()));
@@ -195,6 +196,7 @@ void MainWindow::test_profiles_list() {
         QString profileName = QString::fromStdString(profile->getProfileName());
         ui->personal_profiles_list->addItem(profileName);
     }
+    populateActivateDropdown();
 }
 void MainWindow::test_current_status() {
     ui->Device->setHidden(0);
@@ -252,6 +254,14 @@ void MainWindow::go_to_bolus()  {
 
     std::cout << "BOLUS BUTTON"<<std::endl;
 }
+void MainWindow::populateActivateDropdown() {
+    ui->activateDropdown->clear(); // Clear existing items if any
+
+    const std::vector<UserProfile*>& profiles = device->getUserProfileManager()->getAllProfiles();
+    for (UserProfile* profile : profiles) {
+        ui->activateDropdown->addItem(QString::fromStdString(profile->getProfileName()));
+    }
+}
 
 void MainWindow::add_profile(){
     std::cout << "mainwindow: add_profile" << std::endl;
@@ -292,7 +302,7 @@ void MainWindow::edit_button(){
         //profileManager.createProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, true);
         device->getUserProfileManager()->createProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, true);
         //profileManager.setActiveProfile(profileName);
-        device->getUserProfileManager()->setActiveProfile(profileName);
+        //device->getUserProfileManager()->setActiveProfile(profileName);
 
         std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << std::endl;
 
@@ -357,6 +367,11 @@ void MainWindow::delete_profile(){
 
 }
 
+void MainWindow::ActivateProfileClicked(const QModelIndex &index) {
+    QString profileName = ui->activateDropdown->itemText(index.row());
+    device->getUserProfileManager()->setActiveProfile(profileName.toStdString());
+    std::cout << "Activated profile (clicked): " << profileName.toStdString() << std::endl;
+}
 
 void MainWindow::go_to_home(){
     ui->Device->setHidden(0);
