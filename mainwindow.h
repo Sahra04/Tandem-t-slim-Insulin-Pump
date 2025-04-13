@@ -52,6 +52,7 @@ private slots:
     void test_profile();
     void test_options();
     void test_current_status();
+    void test_bgGraph();
     void go_to_bolus();
     void delete_profile();
     void go_to_options();
