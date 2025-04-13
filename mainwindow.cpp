@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->control_IQ_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setControlIQMode()));
      connect(ui->cgm_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setCgmMode()));
 
-     test_bgGraph();
+     makeGraph();
 
 
 }
@@ -474,4 +474,17 @@ void MainWindow::test_bgGraph(){
     ui->bgGraph->xAxis->setRange(-1, 1);
     ui->bgGraph->yAxis->setRange(0, 1);
     ui->bgGraph->replot();
+}
+
+void MainWindow::makeGraph(){
+    ui->bgGraph->addGraph();
+    ui->bgGraph->xAxis->setTicks(false);
+    ui->bgGraph->yAxis->setLabel("Blood Glucose");
+    ui->bgGraph->xAxis->setRange(0, 12);
+    ui->bgGraph->yAxis->setRange(0, 50);
+    ui->bgGraph->setBackground(Qt::black);
+    ui->bgGraph->yAxis->setTickLabelColor(Qt::white);
+    ui->bgGraph->xAxis->setTickLabelColor(Qt::white);
+    ui->bgGraph->replot();
+
 }

@@ -64,6 +64,7 @@ private slots:
     void setCgmMode();
     void populateActivateDropdown();
     void ActivateProfileClicked(const QModelIndex &index);
+    void makeGraph();
 
 
 };
