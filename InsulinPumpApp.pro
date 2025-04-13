@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 CONFIG += c++11
 
@@ -15,7 +15,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     UserProfile.cpp \
-    UserProfileManager.cpp
+    UserProfileManager.cpp \
+    qcustomplot.cpp
 
 HEADERS += \
     Battery.h \
@@ -23,7 +24,8 @@ HEADERS += \
     Insulincartridge.h \
     mainwindow.h \
     UserProfile.h \
-    UserProfileManager.h
+    UserProfileManager.h \
+    qcustomplot.h
 
 FORMS += \
     mainwindow.ui
