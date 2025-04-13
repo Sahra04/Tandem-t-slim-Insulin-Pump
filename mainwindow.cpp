@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
     // Seed for randomly generating BG values
     std::srand(std::time(0));
 
-
      connect(ui->recharge_button, SIGNAL(released()), this, SLOT(test1()));
 
      connect(ui->insulin_refill_button, SIGNAL(released()), this, SLOT(test2()));
@@ -507,13 +506,24 @@ void MainWindow::test_bgGraph(){
 
 void MainWindow::makeGraph(){
     ui->bgGraph->addGraph();
+    ui->bgGraph->addGraph();
+    ui->bgGraph->addGraph();
+    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+    timeTicker->setTimeFormat("%h:%m:%s");
+    ui->bgGraph->xAxis->setTicker(timeTicker);
     ui->bgGraph->xAxis->setTicks(false);
     ui->bgGraph->yAxis->setLabel("Blood Glucose");
     ui->bgGraph->xAxis->setRange(0, 12);
     ui->bgGraph->yAxis->setRange(0, 50);
+    ui->bgGraph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle,5));
+    ui->bgGraph->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->bgGraph->setBackground(Qt::black);
     ui->bgGraph->yAxis->setTickLabelColor(Qt::white);
     ui->bgGraph->xAxis->setTickLabelColor(Qt::white);
+    ui->bgGraph->graph(1)->setPen(QPen(Qt::red));
+    ui->bgGraph->graph(2)->setPen(QPen(Qt::red));
+    ui->bgGraph->graph(1)->setBrush(QBrush(Qt::red,Qt::Dense3Pattern));
+    ui->bgGraph->graph(1)->setChannelFillGraph(ui->bgGraph->graph(2));
     ui->bgGraph->replot();
 
 }
