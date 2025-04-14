@@ -5,14 +5,13 @@
 
 class InsulinCartridge
 {
-    private:
-        double insulinLevel;
     public:
         InsulinCartridge();
         double getInsulinLevel();
         void refillInsulin();
         void depleteInsulin(double amountToDeplete);
-
+    private:
+        double insulinLevel;
 };
 
 #endif // INSULINCARTRIDGE_H

@@ -458,22 +458,28 @@ void MainWindow::setExtended() {
 
 void MainWindow::submitBolusInfo()  {
     double currentBloodGlucose = ui->bolus_current_BG_textbox->text().toDouble();
-    int carbIntake = ui->bolus_carb_intake_textbox->text().toDouble();
-    double insulinDose = ui->bolus_insulin_dose_textbox->text().toDouble();
+    int carbIntake = ui->bolus_carb_intake_textbox->text().toInt();
+    double bolusInsulinDose = ui->bolus_insulin_dose_textbox->text().toDouble();
 
     std::cout << "Current BG: " << currentBloodGlucose << std::endl;
     std::cout << "Carb Intake: " << carbIntake << std::endl;
-    std::cout << "Insulin Dose: " << insulinDose << std::endl;
+    std::cout << "Insulin Dose: " << bolusInsulinDose << std::endl;
 
     if(ui->extended_radio_button->isChecked()){
-        std::cout << "Extended selected\n" << std::endl;
+
         int deliverNow = ui->bolus_deliver_now_textbox->text().toInt();
-        int duration = ui->bolus_insulin_duration_textbox->text().toInt();
+        int distributionDuration = ui->bolus_insulin_duration_textbox->text().toInt();
+
+        std::cout << "Extended selected\n" << std::endl;
         std::cout << "Deliver now: " << deliverNow << std::endl;
-        std::cout << "Insulin Duration: " << duration << std::endl;
+        std::cout << "Bolus Distribution Duration: " << distributionDuration << std::endl;
+
+        device->deliverBolusExtended(time, bolusInsulinDose, deliverNow, distributionDuration);
 
     } else {
         std::cout << "Default selected\n" << std::endl;
+        device->deliverBolusDefault(time, bolusInsulinDose);
+
     }
 }
 
