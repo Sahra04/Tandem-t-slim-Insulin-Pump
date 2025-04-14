@@ -53,6 +53,12 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->control_IQ_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setControlIQMode()));
      connect(ui->cgm_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setCgmMode()));
 
+     connect(ui->bolus_carb_intake_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
+     connect(ui->bolus_current_BG_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
+
+
+
+
      makeGraph();
 
 
@@ -65,6 +71,27 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::generateEvents(){
+
+}
+
+void MainWindow::updateInsulinValue(){
+
+    cout<<"#MAINWINDOW/updateInsulinValue; before calculating"<<endl;
+   if(ui->bolus_carb_intake_textbox->text().toInt() == 0 || ui->bolus_current_BG_textbox->text().toDouble() == 0){
+       return;
+
+   }
+
+
+    double finalBolus = device->calculateBolus(ui->bolus_carb_intake_textbox->text().toInt(), ui->bolus_current_BG_textbox->text().toDouble(), time);
+
+    cout<<"#MAINWINDOW/updateInsulinValue; before setting"<<endl;
+
+    ui->bolus_insulin_dose_textbox->setText(QString::number(finalBolus));
+
+   cout<<"#MAINWINDOW/updateInsulinValue; after settting"<<endl;
+
+
 
 }
 
@@ -254,6 +281,8 @@ void MainWindow::go_to_bolus()  {
     // Sets current BG if CGM mode is on:
     if (device->getCgmMode()){
         ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
+    } else {
+        ui->bolus_current_BG_textbox->setText(QString::number(0));
     }
 
     std::cout << "BOLUS BUTTON"<<std::endl;

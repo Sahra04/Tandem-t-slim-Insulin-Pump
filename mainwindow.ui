@@ -583,6 +583,9 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       <property name="text">
        <string>CGM MODE</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="control_IQ_checkBox">
       <property name="geometry">
@@ -994,6 +997,9 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(222, 221, 218);</string>
       </property>
+      <property name="text">
+       <string>0</string>
+      </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
@@ -1009,6 +1015,9 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string>0</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

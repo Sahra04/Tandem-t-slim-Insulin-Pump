@@ -28,6 +28,7 @@ private:
     // the following 2 attributes would probably be stored in InsulinPump instead of here in MainWindow
     // std::vector<double> bgValues; // Store all BG values
     double currentBG = 7.0;
+    int time = 0;
 
     //holds period of time graph shows
     const vector<int> timePeriod = {1,3,6};
@@ -43,6 +44,7 @@ private:
     double generateNormal();
     double generateHigh();
     double generateVeryHigh();
+    void sendBolus();
     //UserProfileManager profileManager;
 
 private slots:
@@ -71,6 +73,7 @@ private slots:
     void ActivateProfileClicked(const QModelIndex &index);
     void makeGraph();
     void changeTimeP();
+    void updateInsulinValue();
 
 };
 #endif // MAINWINDOW_H
