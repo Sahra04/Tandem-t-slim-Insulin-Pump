@@ -29,6 +29,11 @@ private:
     // std::vector<double> bgValues; // Store all BG values
     double currentBG = 7.0;
 
+    //holds period of time graph shows
+    const vector<int> timePeriod = {1,3,6};
+
+    int currTimePeriod;
+
     // Functions
 
     void generateEvents();
@@ -65,7 +70,7 @@ private slots:
     void populateActivateDropdown();
     void ActivateProfileClicked(const QModelIndex &index);
     void makeGraph();
-
+    void changeTimeP();
 
 };
 #endif // MAINWINDOW_H
