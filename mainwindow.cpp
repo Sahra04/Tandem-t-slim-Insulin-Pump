@@ -601,7 +601,6 @@ void MainWindow::updateBg(double newBg){
     }
 
     int limit = min(bgRec.size(), timePeriod[currTimePeriod] * 12);
-
     ui->bgGraph->graph(0)->setData(timeRec.mid(0, limit), bgRec.mid(max(bgRec.size()- (timePeriod[currTimePeriod] * 12),0), limit));
     ui->bgGraph->replot();
 
@@ -610,6 +609,8 @@ void MainWindow::updateBg(double newBg){
 void MainWindow::changeTimeP(){
     currTimePeriod =  (currTimePeriod + 1) % 3;
     ui->bgGraph->xAxis->setRange(0, 12 * timePeriod[currTimePeriod]);
+    int limit = min(bgRec.size(), timePeriod[currTimePeriod] * 12);
+    ui->bgGraph->graph(0)->setData(timeRec.mid(0, limit), bgRec.mid(max(bgRec.size()- (timePeriod[currTimePeriod] * 12),0), limit));
     ui->bgGraph->replot();
     ui->BG_ChangeT->setText(QString::fromStdString(std::to_string(timePeriod[currTimePeriod]) + "H"));
 
