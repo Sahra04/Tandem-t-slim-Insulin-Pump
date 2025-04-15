@@ -85,6 +85,7 @@ void MainWindow::updateTimer(){
             hyperglycemiaAlert();
         }
 
+        updateBg(device->getCurrentBG());
 
         cout<<"currentBG: "<<device->getCurrentBG()<<endl;
         cout<<"currentBGWasEdited: "<< currentBGWasEdited << endl;
@@ -559,25 +560,47 @@ void MainWindow::test_bgGraph(){
 }
 
 void MainWindow::makeGraph(){
+    QVector<double> bgHighLimit(72,10), bgLowLimit(72,3.9);
     ui->bgGraph->addGraph();
     ui->bgGraph->addGraph();
     ui->bgGraph->addGraph();
-    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    timeTicker->setTimeFormat("%h:%m:%s");
-    ui->bgGraph->xAxis->setTicker(timeTicker);
+    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+    //timeTicker->setTimeFormat("%h:%m:%s");
+    //ui->bgGraph->xAxis->setTicker(timeTicker);
     ui->bgGraph->xAxis->setTicks(false);
     ui->bgGraph->yAxis->setLabel("Blood Glucose mmol/L");
     ui->bgGraph->xAxis->setRange(0, 12 * timePeriod[currTimePeriod]);
-    ui->bgGraph->yAxis->setRange(0, 50);
+    ui->bgGraph->yAxis->setRange(3, 11);
     ui->bgGraph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle,5));
     //ui->bgGraph->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->bgGraph->setBackground(Qt::black);
     ui->bgGraph->yAxis->setTickLabelColor(Qt::white);
     ui->bgGraph->xAxis->setTickLabelColor(Qt::white);
-    ui->bgGraph->graph(1)->setPen(QPen(Qt::red));
-    ui->bgGraph->graph(2)->setPen(QPen(Qt::red));
-    ui->bgGraph->graph(1)->setBrush(QBrush(Qt::red,Qt::Dense3Pattern));
-    ui->bgGraph->graph(1)->setChannelFillGraph(ui->bgGraph->graph(2));
+
+    QPen limits(Qt::red);
+    limits.setStyle((Qt::DashLine));
+    ui->bgGraph->graph(1)->setPen(limits);
+    ui->bgGraph->graph(2)->setPen(limits);
+    //ui->bgGraph->graph(1)->setBrush(QBrush(Qt::red,Qt::Dense3Pattern));
+    //ui->bgGraph->graph(1)->setChannelFillGraph(ui->bgGraph->graph(2));
+
+    ui->bgGraph->graph(1)->setData(timeRec,bgHighLimit);
+    ui->bgGraph->graph(2)->setData(timeRec, bgLowLimit);
+
+    ui->bgGraph->replot();
+
+}
+
+void MainWindow::updateBg(double newBg){
+
+    bgRec.append(newBg);
+    if(bgRec.size() > 72){
+        bgRec.pop_front();
+    }
+
+    int limit = min(bgRec.size(), timePeriod[currTimePeriod] * 12);
+
+    ui->bgGraph->graph(0)->setData(timeRec.mid(0, limit), bgRec.mid(max(bgRec.size()- (timePeriod[currTimePeriod] * 12),0), limit));
     ui->bgGraph->replot();
 
 }
@@ -588,4 +611,5 @@ void MainWindow::changeTimeP(){
     ui->bgGraph->replot();
 
 }
+
 
