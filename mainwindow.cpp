@@ -57,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
      timer->start(1000);
 
      makeGraph();
+
+     connect(ui->BG_ChangeT, SIGNAL(released()), this, SLOT(changeTimeP()));
 }
 
 MainWindow::~MainWindow()
@@ -609,6 +611,7 @@ void MainWindow::changeTimeP(){
     currTimePeriod =  (currTimePeriod + 1) % 3;
     ui->bgGraph->xAxis->setRange(0, 12 * timePeriod[currTimePeriod]);
     ui->bgGraph->replot();
+    ui->BG_ChangeT->setText(QString::fromStdString(std::to_string(timePeriod[currTimePeriod]) + "H"));
 
 }
 

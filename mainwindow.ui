@@ -1332,6 +1332,19 @@ color: rgb(153, 193, 241);</string>
        <string notr="true">background-color: rgb(0, 0, 0);</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="BG_ChangeT">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>24</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1H</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QLabel" name="battery">
      <property name="geometry">
