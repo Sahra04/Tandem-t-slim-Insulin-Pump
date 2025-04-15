@@ -6,6 +6,10 @@
 #include "UserProfileManager.h"
 #include <QListWidgetItem>
 #include "InsulinPumpDevice.h"
+#include <iostream>
+#include <cmath>   // for round()
+#include <QTimer>
+#include <QTime>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -35,30 +39,21 @@ private:
 
     int currTimePeriod;
 
-    // Functions
-
-    void generateEvents();
-
-    double generateVeryLow();
-    double generateLow();
-    double generateNormal();
-    double generateHigh();
-    double generateVeryHigh();
-    void sendBolus();
-    //UserProfileManager profileManager;
+    //simuation time attributes
+    QTime simulatedTime;
+    QTimer *timer;
 
 private slots:
-    void test1();
-    void test2();
+    void rechargeDevice();
+    void refillCartridge();
 
     void edit_button();
     void add_profile();
     void go_to_home();
-    void test_log();
-    void test_profiles_list();
-    void test_profile();
-    void test_options();
-    void test_current_status();
+    void go_to_logs();
+    void go_to_profiles_list();
+    void go_to_profile();
+    void go_to_current_status();
     void test_bgGraph();
     void go_to_bolus();
     void delete_profile();
@@ -74,6 +69,8 @@ private slots:
     void makeGraph();
     void changeTimeP();
     void updateInsulinValue();
+
+    void updateTimer();
 
 };
 #endif // MAINWINDOW_H

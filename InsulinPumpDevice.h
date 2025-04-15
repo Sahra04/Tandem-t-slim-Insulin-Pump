@@ -4,6 +4,7 @@
 #include "UserProfileManager.h"
 #include "Battery.h"
 #include "Insulincartridge.h"
+#include "CgmSensor.h"
 #include <unordered_map>
 #include <vector>
 
@@ -14,20 +15,22 @@ public:
     InsulinPumpDevice(double currentBloodGlucose);
     ~InsulinPumpDevice();
 
-    void deliverInsulin(double amount);
     void deliverBolusDefault(int time, double amount);
     void deliverBolusExtended(int time, double amount, int immediateBolusPercentage, int distributionDuration);
-    void calculateInsulin();
     void calculateInsulinOnBoard(int timepassed);
     double calculateBolus(int carbIntake, double currentBG, int currentTime);
+    void readInBGFromCGM();
 
-    //getters
+    //setters
     void setControlIQMode(bool val);
     void setCurrentBG(double currentBloodGlucose);
     void setCgmMode(bool val);
 
-    //setters
+    //getters
     UserProfileManager* getUserProfileManager();
+    Battery* getBattery();
+    InsulinCartridge* getInsulinCartridge();
+    CgmSensor* getCgmSensor();
     bool getCgmMode();
     double getCurrentBG();
     bool getControlIQMode();
@@ -49,6 +52,7 @@ private:
     UserProfileManager* userProfileManager;
     Battery* battery;
     InsulinCartridge* insulinCartridge;
+    CgmSensor* cgmSensor;
     std::unordered_map<int, vector<insulinDeliveredDuration>> insulinOnBoardMap;
 };
 

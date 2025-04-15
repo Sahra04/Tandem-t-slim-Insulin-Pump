@@ -5,6 +5,7 @@ InsulinPumpDevice::InsulinPumpDevice(double currentBloodGlucose)
     currentBG = currentBloodGlucose;
     userProfileManager = new UserProfileManager();
     insulinCartridge = new InsulinCartridge();
+    cgmSensor = new CgmSensor();
     battery = new Battery();
     cgmMode = true;
     controlIQMode = false;
@@ -14,26 +15,7 @@ InsulinPumpDevice::~InsulinPumpDevice(){
     delete userProfileManager;
     delete insulinCartridge;
     delete battery;
-}
-
-void InsulinPumpDevice::deliverInsulin(double amount){
-
-
-    //THOUGHT (confirm with team): instead of amount, have an attrribute that is insulinTodeliever
-    //this can change depending on the case; basal, bolus, quick
-
-
-    //keep track of insulin taken
-    totalInsulinTaken += amount;
-
-    //check if insulin level is low
-    if(insulinCartridge->getInsulinLevel() - amount <= 0){
-        cout<<"#InsulinPumpDevice/deliverInsulin; low insulin level alert"<<endl;
-    }
-
-    //deplete insulin Cartidge
-    insulinCartridge->depleteInsulin(amount);
-
+    delete cgmSensor;
 }
 
 void InsulinPumpDevice::deliverBolusDefault(int time, double amount){
@@ -45,6 +27,9 @@ void InsulinPumpDevice::deliverBolusDefault(int time, double amount){
 
     cout << "#InsulinPumpDevice/deliverBolusDefault  currentBG: "<< currentBG << endl;
 
+    // Add to read vector
+    cgmSensor->addToRead(currentBG);
+    
     // check if BG too low/high
 
     // deplete insulin from cartridge
@@ -80,6 +65,10 @@ void InsulinPumpDevice::deliverBolusExtended(int time, double amount, int immedi
 
 }
 
+void InsulinPumpDevice::readInBGFromCGM(){
+    currentBG = cgmSensor->getNextReading();
+}
+
 double InsulinPumpDevice::calculateBolus(int carbIntake, double currentBG, int currentTime){
 
      cout<<"#InsulinPD/calculatedBolus; carbIntake: "<<carbIntake<<endl;
@@ -110,19 +99,15 @@ double InsulinPumpDevice::calculateBolus(int carbIntake, double currentBG, int c
 }
 
 
-void InsulinPumpDevice:: calculateInsulin(){
-
-}
-
 void InsulinPumpDevice::calculateInsulinOnBoard(int currentTime){
+
     insulinOnBoard = 0;
 
     // Loop through all key-value pairs in map
     // Key: time
     // Value: vector{struct{amount, duration}}
-
     for (const auto& [time, insulinDeliveredDuration] : insulinOnBoardMap) {
-        //Getting struct:
+        
         const auto& insulinDeliveredDurationStruct = insulinDeliveredDuration[0];
 
         std::cout << "Key (Time) : " << time << "Value (Insulin Delivered) : " << insulinDeliveredDurationStruct.insulinDelivered << ", Value (Duration) : " << insulinDeliveredDurationStruct.bolusInsulinDuration << std::endl;
@@ -130,9 +115,6 @@ void InsulinPumpDevice::calculateInsulinOnBoard(int currentTime){
         insulinOnBoard +=  insulinDeliveredDurationStruct.insulinDelivered * (1 - ((currentTime - time )/insulinDeliveredDurationStruct.bolusInsulinDuration));
     }
 
-
-    //insulinOnBoard = totalInsulinTaken*(1 - (timepassed/userProfileManager->getActiveProfile()->getInsulinDuration()));
-    //insulinOnBoard = totalInsulinTake*(1 - timepassed/insulin duration)
 
 }
 
@@ -162,4 +144,15 @@ bool InsulinPumpDevice::getControlIQMode(){
 void InsulinPumpDevice::setControlIQMode(bool val){
     controlIQMode = val;
     std::cout << "Control IQ Mode: " << controlIQMode << std::endl;
+}
+
+Battery* InsulinPumpDevice::getBattery(){
+    return battery;
+}
+InsulinCartridge* InsulinPumpDevice::getInsulinCartridge(){
+    return insulinCartridge;
+}
+
+CgmSensor* InsulinPumpDevice::getCgmSensor(){
+    return cgmSensor;
 }

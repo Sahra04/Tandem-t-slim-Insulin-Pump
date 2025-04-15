@@ -16,7 +16,8 @@ SOURCES += \
     mainwindow.cpp \
     UserProfile.cpp \
     UserProfileManager.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    CgmSensor.cpp \
 
 HEADERS += \
     Battery.h \
@@ -25,7 +26,8 @@ HEADERS += \
     mainwindow.h \
     UserProfile.h \
     UserProfileManager.h \
-    qcustomplot.h
+    qcustomplot.h \
+    CgmSensor.h \
 
 FORMS += \
     mainwindow.ui

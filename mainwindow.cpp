@@ -1,11 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <iostream>
-#include <cmath>   // for round()
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0))
+    , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0)), simulatedTime(QTime(12, 0)), timer(new QTimer(this))
 {
     ui->setupUi(this);
 
@@ -18,17 +17,14 @@ MainWindow::MainWindow(QWidget *parent)
     // set inital graph time period
     currTimePeriod = 0;
 
-     connect(ui->recharge_button, SIGNAL(released()), this, SLOT(test1()));
-
-     connect(ui->insulin_refill_button, SIGNAL(released()), this, SLOT(test2()));
+     // recharge and refill
+     connect(ui->recharge_button, SIGNAL(released()), this, SLOT(rechargeDevice()));
+     connect(ui->insulin_refill_button, SIGNAL(released()), this, SLOT(refillCartridge()));
 
      // For testing only
-     connect(ui->test_log_button, SIGNAL(released()), this, SLOT(test_log()));
-     connect(ui->test_profile_list_button, SIGNAL(released()), this, SLOT(test_profiles_list()));
-     connect(ui->test_current_status_button, SIGNAL(released()), this, SLOT(test_current_status()));
-     connect(ui->test_options_button, SIGNAL(released()), this, SLOT(test_options()));
-     connect(ui->test_profile_button, SIGNAL(released()), this, SLOT(test_profile()));
-     connect(ui->test_bolus_button, SIGNAL(released()), this, SLOT(go_to_bolus()));
+     connect(ui->logs_screen_button, SIGNAL(released()), this, SLOT(go_to_logs()));
+     connect(ui->personal_profiles_screen_button, SIGNAL(released()), this, SLOT(go_to_profiles_list()));
+     connect(ui->current_status_button, SIGNAL(released()), this, SLOT(go_to_current_status()));
 
     // Home related signals and slots
      connect(ui->home_button, SIGNAL(released()), this, SLOT(go_to_home()));
@@ -56,6 +52,9 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->bolus_carb_intake_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
 
+     connect(timer, &QTimer::timeout, this, &MainWindow::updateTimer);
+     timer->start(1000);
+
 
 
 
@@ -70,16 +69,36 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::generateEvents(){
+void MainWindow::updateTimer(){
+    std::cout << "#MainWindow/updateTimer"<<std::endl;
+    //add 5 simulated minutes 
+    simulatedTime = simulatedTime.addSecs(300);
 
+    //update UI time
+    ui->home_time_label->setText(simulatedTime.toString("hh:mm"));
+
+    // If in CGM Mode, read in  value
+    if(device->getCgmMode()){
+        device->readInBGFromCGM();
+        cout<<"currentBG: "<<device->getCurrentBG()<<endl;
+        ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
+        ui->home_current_BG_label->setText(QString::number(device->getCurrentBG()));
+    }
+
+    // Depleting battery by 1%
+    device->getBattery()->depleteBattery();
+    // Updating UI
+    ui->battery->setText(QString::number(device->getBattery()->getBatteryLevel()) + "%");
+ 
 }
 
+// On Bolus Screen,  autopopulating the calculated insulin dose recommended
 void MainWindow::updateInsulinValue(){
 
     cout<<"#MAINWINDOW/updateInsulinValue; before calculating"<<endl;
+    // To prevent division by 0
    if(ui->bolus_carb_intake_textbox->text().toInt() == 0 || ui->bolus_current_BG_textbox->text().toDouble() == 0){
        return;
-
    }
 
 
@@ -95,54 +114,7 @@ void MainWindow::updateInsulinValue(){
 
 }
 
-double MainWindow::generateVeryLow() {
-    double newBG = std::round((3.8 * std::rand() / RAND_MAX) * 10) / 10; // 0.0 - 3.8
-    //return std::round((3.8 * std::rand() / RAND_MAX) * 10) / 10; // 0.0 - 3.8
-    device->setCurrentBG(newBG);
-    return newBG;
-}
-
-double MainWindow::generateLow() {
-    double newBG = std::round((2.3 * std::rand() / RAND_MAX + 3.9) * 10) / 10; // 3.9 - 6.2
-    //return std::round((2.3 * std::rand() / RAND_MAX + 3.9) * 10) / 10; // 3.9 - 6.2
-    device->setCurrentBG(newBG);
-    return newBG;
-}
-
-double MainWindow::generateNormal() {
-    double newBG = std::round((2.6 * std::rand() / RAND_MAX + 6.3) * 10) / 10; // 6.3 - 8.9
-    //return std::round((2.6 * std::rand() / RAND_MAX + 6.3) * 10) / 10; // 6.3 - 8.9
-    device->setCurrentBG(newBG);
-    return newBG;
-}
-
-double MainWindow::generateHigh() {
-    double newBG = std::round((1.1 * std::rand() / RAND_MAX + 8.9) * 10) / 10; // 9.0 - 10.0
-    //return std::round((1.1 * std::rand() / RAND_MAX + 8.9) * 10) / 10; // 9.0 - 10.0
-    device->setCurrentBG(newBG);
-    return newBG;
-}
-
-double MainWindow::generateVeryHigh() {
-    // 15.0 was set as an upper bound, design choice
-
-    double newBG = std::round((5.0 * std::rand() / RAND_MAX + 10.0) * 10) / 10; // 10.1 - 15.0
-    //return std::round((5.0 * std::rand() / RAND_MAX + 10.0) * 10) / 10; // 10.1 - 15.0
-    device->setCurrentBG(newBG);
-    return newBG;
-}
-
 void MainWindow::power() {
-    double test = generateVeryLow();
-    std::cout << "generateVeryLow: " << test << std::endl;
-    test = generateLow();
-    std::cout << "generateLow: " << test << std::endl;
-    test = generateNormal();
-    std::cout << "generateNormal: " << test << std::endl;
-    test = generateHigh();
-    std::cout << "generateHigh: " << test << std::endl;
-    test = generateVeryHigh();
-    std::cout << "generateVeryHigh: " << test << std::endl;
 
     if (ui->power_button->text() == "Power Off") {
         ui->power_button->setText("Power On");
@@ -185,19 +157,21 @@ void MainWindow::go_to_options(){
     std::cout << "OPTIONS BUTTON"<<std::endl;
 }
 
-void MainWindow::test1(){
-    std::cout << "Test 1 is being called "<<std::endl;
+void MainWindow::rechargeDevice(){
+    std::cout << "#MainWindow/rechargeDevice"<<std::endl;
+    ui->battery->setText("100%");
+    device->getBattery()->rechargeBattery();
 
 }
 
-void MainWindow::test2(){
-    std::cout << "Test 2 is being called "<<std::endl;
-
+void MainWindow::refillCartridge(){
+    std::cout << "#MainWindow/refillInsulin"<<std::endl;
+    device->getInsulinCartridge()->refillInsulin();
 
 }
 
 
-void MainWindow::test_log() {
+void MainWindow::go_to_logs() {
     ui->Device->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(1);
@@ -209,7 +183,7 @@ void MainWindow::test_log() {
     std::cout << "LOG BUTTON"<<std::endl;
 }
 
-void MainWindow::test_profiles_list() {
+void MainWindow::go_to_profiles_list() {
     ui->Device->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
@@ -229,7 +203,7 @@ void MainWindow::test_profiles_list() {
     }
     populateActivateDropdown();
 }
-void MainWindow::test_current_status() {
+void MainWindow::go_to_current_status() {
     ui->Device->setHidden(0);
     ui->log_screen->setHidden(0);
     ui->personal_profiles_list_screen->setHidden(0);
@@ -241,20 +215,8 @@ void MainWindow::test_current_status() {
     std::cout << "CURRENT STATUS BUTTON"<<std::endl;
 }
 
-void MainWindow::test_options() {
-    ui->Device->setHidden(0);
-    ui->log_screen->setHidden(0);
-    ui->personal_profiles_list_screen->setHidden(0);
-    ui->current_status_screen->setHidden(0);
-    ui->options_screen->setHidden(0);
-    ui->personal_profile_screen->setHidden(1);
-    ui->bolus_screen->setHidden(1);
-    ui->home_screen->setHidden(1);
-    std::cout << "OPTIONS BUTTON"<<std::endl;
-}
 
-
-void MainWindow::test_profile() {
+void MainWindow::go_to_profile() {
     ui->profile_name_textbox->setReadOnly(true);
     ui->Device->setHidden(0);
     ui->log_screen->setHidden(0);
@@ -278,12 +240,6 @@ void MainWindow::go_to_bolus()  {
     ui->bolus_screen->setHidden(0);
 
     ui->home_screen->setHidden(1);
-    // Sets current BG if CGM mode is on:
-    if (device->getCgmMode()){
-        ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
-    } else {
-        ui->bolus_current_BG_textbox->setText(QString::number(0));
-    }
 
     std::cout << "BOLUS BUTTON"<<std::endl;
 }
@@ -341,7 +297,7 @@ void MainWindow::edit_button(){
 
         //std::cout << "CREATE BUTTON" << std::endl;
 
-        test_profiles_list();
+        go_to_profiles_list();
         // Clear the textboxes after profile creation
         ui->profile_name_textbox->clear();
         ui->basal_rate_textbox->clear();
@@ -368,7 +324,7 @@ void MainWindow::edit_button(){
 
         //std::cout << "SAVE BUTTON" << std::endl;
 
-        test_profiles_list();
+        go_to_profiles_list();
         // Clear the textboxes after saving profile
         ui->profile_name_textbox->clear();
         ui->basal_rate_textbox->clear();
@@ -379,16 +335,14 @@ void MainWindow::edit_button(){
         ui->insulin_duration_textbox->clear();
 
     }
-    //ui->edit_profile_button->setText("Save");
 }
 
 void MainWindow::delete_profile(){
     std::string profileName = ui->profile_name_textbox->text().toStdString();
-    //UserProfileVector.deleteProfile(profileeName);
     std::cout << "DELETE BUTTON" << std::endl;
     device->getUserProfileManager()->deleteProfile(profileName);
 
-    test_profiles_list();
+    go_to_profiles_list();
     // Clear the textboxes after saving profile
     ui->profile_name_textbox->clear();
     ui->basal_rate_textbox->clear();
@@ -423,7 +377,6 @@ void MainWindow::go_to_home(){
 void MainWindow::profile_item_clicked(QListWidgetItem* item) {
     std::string selectedProfileName = item->text().toStdString();
 
-    //UserProfile* selectedProfile = profileManager.getprofile(selectedProfileName);
     UserProfile* selectedProfile = device->getUserProfileManager()->getprofile(selectedProfileName);
 
     if (selectedProfile) {
@@ -437,7 +390,7 @@ void MainWindow::profile_item_clicked(QListWidgetItem* item) {
 
         ui->edit_profile_button->setText("Save");
         ui->profile_name_textbox->setReadOnly(true);
-        test_profile();  // Call any function to refresh UI if needed
+        go_to_profile();  // Call any function to refresh UI if needed
 
         std::cout << "Loaded profile: " << selectedProfileName << std::endl;
     } else {

@@ -5,7 +5,7 @@
 
 Battery::Battery(){
 
-    batteryLevel = 50;
+    batteryLevel = 100;
 
 }
 
@@ -26,7 +26,7 @@ void Battery::rechargeBattery(){
 //deplete battery to low
 void Battery::depleteBattery(){
 
-    batteryLevel = 30;
+    batteryLevel -= 1;
 
 }
 
