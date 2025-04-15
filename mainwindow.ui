@@ -984,6 +984,9 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QLineEdit" name="bolus_carb_intake_textbox">
       <property name="geometry">
@@ -1003,6 +1006,9 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QLineEdit" name="bolus_insulin_dose_textbox">
       <property name="geometry">
@@ -1021,6 +1027,9 @@ font: 75 20pt &quot;DejaVu Sans&quot;;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QLineEdit" name="bolus_insulin_duration_textbox">

@@ -20,6 +20,8 @@ public:
     void calculateInsulinOnBoard(int timepassed);
     double calculateBolus(int carbIntake, double currentBG, int currentTime);
     void readInBGFromCGM();
+    void decreaseBatteryLevel();
+
 
     //setters
     void setControlIQMode(bool val);

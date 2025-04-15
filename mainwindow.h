@@ -43,6 +43,8 @@ private:
     QTime simulatedTime;
     QTimer *timer;
 
+    bool currentBGWasEdited = false;
+
 private slots:
     void rechargeDevice();
     void refillCartridge();
@@ -69,8 +71,14 @@ private slots:
     void makeGraph();
     void changeTimeP();
     void updateInsulinValue();
+    void updateCurrentBGWasEdited();
 
     void updateTimer();
+    void lowBattery();
+
+    void hypoglycemiaAlert();
+    void hyperglycemiaAlert();
+
 
 };
 #endif // MAINWINDOW_H

@@ -25,27 +25,8 @@ void Battery::rechargeBattery(){
 
 //deplete battery to low
 void Battery::depleteBattery(){
-
-    batteryLevel -= 1;
+    if(batteryLevel != 0){
+        batteryLevel -= 1;
+    }
 
 }
-
-//for testing battery functions
-/*
-int main(){
-
-    Battery test;
-
-    std::cout<<test.getBatteryLevel();
-
-    test.rechargeBattery();
-
-    std::cout<<test.getBatteryLevel();
-
-    test.depleteBattery();
-
-    std::cout<<test.getBatteryLevel();
-
-    return 0;
-}
-*/

@@ -50,17 +50,13 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->cgm_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setCgmMode()));
 
      connect(ui->bolus_carb_intake_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
+     connect(ui->bolus_current_BG_textbox,  SIGNAL(textEdited(QString)), this, SLOT(updateCurrentBGWasEdited()));
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
 
      connect(timer, &QTimer::timeout, this, &MainWindow::updateTimer);
      timer->start(1000);
 
-
-
-
      makeGraph();
-
-
 }
 
 MainWindow::~MainWindow()
@@ -77,19 +73,88 @@ void MainWindow::updateTimer(){
     //update UI time
     ui->home_time_label->setText(simulatedTime.toString("hh:mm"));
 
+
     // If in CGM Mode, read in  value
     if(device->getCgmMode()){
         device->readInBGFromCGM();
+
+        if(device->getCurrentBG() < 3.9){
+            hypoglycemiaAlert();
+        } else if(device->getCurrentBG() > 10.0){
+            hyperglycemiaAlert();
+        }
+
+
         cout<<"currentBG: "<<device->getCurrentBG()<<endl;
-        ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
+        cout<<"currentBGWasEdited: "<< currentBGWasEdited << endl;
+
+        if (currentBGWasEdited == false){
+            ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
+        }
         ui->home_current_BG_label->setText(QString::number(device->getCurrentBG()));
     }
 
     // Depleting battery by 1%
-    device->getBattery()->depleteBattery();
-    // Updating UI
+    device->decreaseBatteryLevel();
+
+    if (device->getBattery()->getBatteryLevel() <= 10){
+        lowBattery();
+    }
+
+    // Updating UI for battery
     ui->battery->setText(QString::number(device->getBattery()->getBatteryLevel()) + "%");
+
+    // Updating UI for insulin cartridge
+    ui->insulin_cartidge->setText(QString::number(device->getInsulinCartridge()->getInsulinLevel()) + " u");
  
+}
+
+void MainWindow::hypoglycemiaAlert(){
+    // Add item to logs list
+    ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BLOOD GLUCOSE VERY LOW (HYPOGLYCEMIA)");
+
+    // Go to logs screen
+    go_to_logs();
+}
+
+void MainWindow::hyperglycemiaAlert(){
+    // Add item to logs list
+    ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BLOOD GLUCOSE VERY HIGH (HYPERGLYCEMIA)");
+
+    // Go to logs screen
+    go_to_logs();
+}
+
+
+void MainWindow::lowBattery(){
+    if (device->getBattery()->getBatteryLevel() == 0){
+        ui->power_button->setText("Power Off");
+
+        // Stop reading in BG values
+        device->setCgmMode(false);
+
+        // Add item to logs list
+        ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BATTERY DEAD");
+
+        // Go to logs screen
+        go_to_logs();
+
+        // Power off
+        power();
+
+    } else if (device->getBattery()->getBatteryLevel() <= 10){
+        // Add item to logs list
+        ui->loglist->addItem(QString(ui->home_time_label->text()) + ": LOW BATTERY");
+
+        // Go to logs screen
+        go_to_logs();
+    }
+}
+// Once the textbox for currentBG was edited, do not overwrite with CGM's reading for currentBG
+void MainWindow::updateCurrentBGWasEdited(){
+    currentBGWasEdited = true;
+    cout << "#MainWindow/updateCurrentBGWasEdited  currentBGWasEdited: " << currentBGWasEdited << endl;
+    updateInsulinValue();
 }
 
 // On Bolus Screen,  autopopulating the calculated insulin dose recommended
@@ -159,15 +224,20 @@ void MainWindow::go_to_options(){
 
 void MainWindow::rechargeDevice(){
     std::cout << "#MainWindow/rechargeDevice"<<std::endl;
+
+    // Set CGM Mode back on
+    device->setCgmMode(true);
+
     ui->battery->setText("100%");
     device->getBattery()->rechargeBattery();
+    ui->power_button->setText("Power On");
+    power();
 
 }
 
 void MainWindow::refillCartridge(){
     std::cout << "#MainWindow/refillInsulin"<<std::endl;
     device->getInsulinCartridge()->refillInsulin();
-
 }
 
 
@@ -242,6 +312,13 @@ void MainWindow::go_to_bolus()  {
     ui->home_screen->setHidden(1);
 
     std::cout << "BOLUS BUTTON"<<std::endl;
+
+    // Only make textboxes editable if an active profile exists
+    if (device->getUserProfileManager()->getActiveProfile()){
+        ui->bolus_carb_intake_textbox->setReadOnly(false);
+        ui->bolus_current_BG_textbox->setReadOnly(false);
+        ui->bolus_insulin_dose_textbox->setReadOnly(false);
+    }
 }
 void MainWindow::populateActivateDropdown() {
     ui->activateDropdown->clear(); // Clear existing items if any
@@ -413,6 +490,12 @@ void MainWindow::setExtended() {
 }
 
 void MainWindow::submitBolusInfo()  {
+    // Go to home screen
+    go_to_home();
+
+    // Reset for next bolus
+    currentBGWasEdited = false;
+
     double currentBloodGlucose = ui->bolus_current_BG_textbox->text().toDouble();
     int carbIntake = ui->bolus_carb_intake_textbox->text().toInt();
     double bolusInsulinDose = ui->bolus_insulin_dose_textbox->text().toDouble();
@@ -435,6 +518,15 @@ void MainWindow::submitBolusInfo()  {
     } else {
         std::cout << "Default selected\n" << std::endl;
         device->deliverBolusDefault(time, bolusInsulinDose);
+
+        // Update logs
+        if(device->getInsulinCartridge()->getInsulinLevel() == 0){
+            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": INSULIN CARTRIDGE IS EMPTY");
+            go_to_logs();
+        } else if (device->getInsulinCartridge()->getInsulinLevel() <= 10) {
+            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": LOW INSULIN IN CARTRIDGE");
+            go_to_logs();
+        }
 
     }
 }

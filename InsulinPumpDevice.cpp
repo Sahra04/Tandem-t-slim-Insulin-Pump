@@ -35,6 +35,7 @@ void InsulinPumpDevice::deliverBolusDefault(int time, double amount){
     // deplete insulin from cartridge
     insulinCartridge->depleteInsulin(amount);
 
+
     cout << "#InsulinPumpDevice/deliverBolusDefault  after depleting cartridge" << endl;
 
     // add to timeInsulinMap
@@ -67,6 +68,11 @@ void InsulinPumpDevice::deliverBolusExtended(int time, double amount, int immedi
 
 void InsulinPumpDevice::readInBGFromCGM(){
     currentBG = cgmSensor->getNextReading();
+}
+
+void InsulinPumpDevice::decreaseBatteryLevel(){
+    battery->depleteBattery();
+
 }
 
 double InsulinPumpDevice::calculateBolus(int carbIntake, double currentBG, int currentTime){

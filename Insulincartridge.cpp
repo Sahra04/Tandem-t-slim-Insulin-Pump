@@ -19,6 +19,10 @@ void InsulinCartridge::refillInsulin(){
 void InsulinCartridge::depleteInsulin(double amountToDeplete){
 
     insulinLevel -= amountToDeplete;
+    if(insulinLevel <= 0){
+        insulinLevel = 0;
+    }
+
     std::cout << "#InsulinCartridge/depleteInsulin  after depleting insulin: "<< insulinLevel << std::endl;
 
 }
