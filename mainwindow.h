@@ -27,6 +27,7 @@ private:
     Ui::MainWindow *ui;
     InsulinPumpDevice *device;
     int eventCount;
+    int minuteCounter = 0;
     // has an InsulinPump object, like how it has pointer to UI
 
     // the following 2 attributes would probably be stored in InsulinPump instead of here in MainWindow
@@ -74,7 +75,7 @@ private slots:
     void updateCurrentBGWasEdited();
 
     void updateTimer();
-    void lowBattery();
+    void lowBatteryAlert();
 
     void hypoglycemiaAlert();
     void hyperglycemiaAlert();

@@ -69,6 +69,7 @@ void MainWindow::updateTimer(){
     std::cout << "#MainWindow/updateTimer"<<std::endl;
     //add 5 simulated minutes 
     simulatedTime = simulatedTime.addSecs(300);
+    minuteCounter += 5;
 
     //update UI time
     ui->home_time_label->setText(simulatedTime.toString("hh:mm"));
@@ -92,13 +93,15 @@ void MainWindow::updateTimer(){
             ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
         }
         ui->home_current_BG_label->setText(QString::number(device->getCurrentBG()));
+//        device->calculateInsulinOnBoard(minuteCounter);
+//        ui->home_iob_label->setText(QString::number(device->getInsulinOnBoard()));
     }
 
     // Depleting battery by 1%
     device->decreaseBatteryLevel();
 
     if (device->getBattery()->getBatteryLevel() <= 10){
-        lowBattery();
+        lowBatteryAlert();
     }
 
     // Updating UI for battery
@@ -126,7 +129,7 @@ void MainWindow::hyperglycemiaAlert(){
 }
 
 
-void MainWindow::lowBattery(){
+void MainWindow::lowBatteryAlert(){
     if (device->getBattery()->getBatteryLevel() == 0){
         ui->power_button->setText("Power Off");
 
@@ -517,14 +520,11 @@ void MainWindow::submitBolusInfo()  {
 
     } else {
         std::cout << "Default selected\n" << std::endl;
-        device->deliverBolusDefault(time, bolusInsulinDose);
 
-        // Update logs
-        if(device->getInsulinCartridge()->getInsulinLevel() == 0){
-            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": INSULIN CARTRIDGE IS EMPTY");
-            go_to_logs();
-        } else if (device->getInsulinCartridge()->getInsulinLevel() <= 10) {
-            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": LOW INSULIN IN CARTRIDGE");
+        if(device->getInsulinCartridge()->getInsulinLevel() >= bolusInsulinDose){
+            device->deliverBolusDefault(minuteCounter, bolusInsulinDose);
+        } else {
+            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
             go_to_logs();
         }
 
