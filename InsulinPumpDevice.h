@@ -36,6 +36,7 @@ public:
     bool getCgmMode();
     double getCurrentBG();
     bool getControlIQMode();
+    double getInsulinOnBoard();
 
 
 

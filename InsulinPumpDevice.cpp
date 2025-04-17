@@ -112,18 +112,27 @@ void InsulinPumpDevice::calculateInsulinOnBoard(int currentTime){
     // Loop through all key-value pairs in map
     // Key: time
     // Value: vector{struct{amount, duration}}
-    for (const auto& [time, insulinDeliveredDuration] : insulinOnBoardMap) {
-        
-        const auto& insulinDeliveredDurationStruct = insulinDeliveredDuration[0];
+    for (auto it = insulinOnBoardMap.begin(); it != insulinOnBoardMap.end(); ) {
+        const auto& [timeDelivered, deliveries] = *it;
+        const auto& delivery = deliveries[0];
 
-        std::cout << "Key (Time) : " << time << "Value (Insulin Delivered) : " << insulinDeliveredDurationStruct.insulinDelivered << ", Value (Duration) : " << insulinDeliveredDurationStruct.bolusInsulinDuration << std::endl;
+        //double remainingIOB = delivery.insulinDelivered * (1 - (currentTime - timeDelivered) / (delivery.bolusInsulinDuration * 60.0);
 
-        insulinOnBoard +=  insulinDeliveredDurationStruct.insulinDelivered * (1 - ((currentTime - time )/insulinDeliveredDurationStruct.bolusInsulinDuration));
+        double remainingIOB = delivery.insulinDelivered * (1 - ((currentTime - timeDelivered) / (delivery.bolusInsulinDuration * 60.0)));
+        if (remainingIOB > 0) {
+            insulinOnBoard += remainingIOB;
+            ++it;
+        } else {
+            it = insulinOnBoardMap.erase(it);
+        }
     }
 
 
 }
 
+double InsulinPumpDevice::getInsulinOnBoard(){
+    return insulinOnBoard;
+}
 
 double InsulinPumpDevice::getCurrentBG(){
     return currentBG;

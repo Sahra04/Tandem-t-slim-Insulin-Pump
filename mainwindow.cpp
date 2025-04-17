@@ -96,8 +96,8 @@ void MainWindow::updateTimer(){
             ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
         }
         ui->home_current_BG_label->setText(QString::number(device->getCurrentBG()));
-//        device->calculateInsulinOnBoard(minuteCounter);
-//        ui->home_iob_label->setText(QString::number(device->getInsulinOnBoard()));
+        device->calculateInsulinOnBoard(minuteCounter);
+        ui->home_iob_label->setText(QString::number(device->getInsulinOnBoard()));
     }
 
     // Depleting battery by 1%
@@ -233,6 +233,7 @@ void MainWindow::rechargeDevice(){
 
     // Set CGM Mode back on
     device->setCgmMode(true);
+    ui->cgm_checkBox->isChecked();
 
     ui->battery->setText("100%");
     device->getBattery()->rechargeBattery();
