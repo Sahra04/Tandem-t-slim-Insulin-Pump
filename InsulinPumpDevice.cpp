@@ -9,6 +9,11 @@ InsulinPumpDevice::InsulinPumpDevice(double currentBloodGlucose)
     battery = new Battery();
     cgmMode = true;
     controlIQMode = false;
+    extendedBolusHour =  0;
+    extendedBolusTime = 0;
+    extendedBolusPhase = 0;
+    isStopped = false; 
+    bolusPerHour = 0;
 }
 
 InsulinPumpDevice::~InsulinPumpDevice(){
@@ -24,47 +29,114 @@ void InsulinPumpDevice::deliverBolusDefault(int time, double amount){
 
     // update currentBG
     currentBG -= (userProfileManager->getActiveProfile()->getCorrectionFactor() * amount);
+    // cgmSensor->getValueTracker();
+    // simulatedBGValues.insert(simulatedBGValues.begin() + cgmSensor->getValueTracker(), currentBG );
 
     cout << "#InsulinPumpDevice/deliverBolusDefault  currentBG: "<< currentBG << endl;
 
+    //updating stats
+    updateInsulinDelivery(time, amount);
+
+}
+
+void InsulinPumpDevice::updateInsulinDelivery(int time, double amount){
+
     // Add to read vector
-    cgmSensor->addToRead(currentBG);
-    
+    //cgmSensor->addToRead(currentBG);
+    cgmSensor->setSimulatedBgValues(currentBG);
+
     // check if BG too low/high
 
     // deplete insulin from cartridge
     insulinCartridge->depleteInsulin(amount);
 
-
-    cout << "#InsulinPumpDevice/deliverBolusDefault  after depleting cartridge" << endl;
+    cout << "#InsulinPumpDevice/updateInsulinDelivery| after depleting cartridge" << endl;
 
     // add to timeInsulinMap
     insulinOnBoardMap.insert({time,{{amount, userProfileManager->getActiveProfile()->getInsulinDuration()}}});
     calculateInsulinOnBoard(time);
 
-    cout << "#InsulinPumpDevice/deliverBolusDefault  after adding to map" << endl;
+    cout << "#InsulinPumpDevice/updateInsulinDelivery| after adding to map" << endl;
 
+}
+
+//we set to 0 when extended bolus is completed
+//extendedPhase == 1: immediate bolus portion -- think of it as phase 1 of extended bolus
+//extendedPhase == 2: rest of duration boluses -- think of it as phase 2 of extended bolus
+void InsulinPumpDevice::deliverBolusExtended(int time){
+
+    cout << "#InsulinPumpDevice/deliverBolusExtended| insulinAmountForExtended: " <<insulinAmountForExtended<<endl;
+    cout << "#InsulinPumpDevice/deliverBolusExtended| immediateBolusPercentage: " <<immediateBolusPercentage<<endl;
+    cout << "#InsulinPumpDevice/deliverBolusExtended| distributionDuration: " <<distributionDuration<<endl;
+    cout << "#InsulinPumpDevice/deliverBolusExtended| extendedBolusPhase: " <<extendedBolusPhase<<endl;
+
+   // phase 1: immediate bolus portion
+   if(extendedBolusPhase == 1){
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended| PHASE 1 IN EFFECT "<<endl;
+
+        double immediateBolus = insulinAmountForExtended * (double(immediateBolusPercentage)/double(100));
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended| immediateBolus: " <<immediateBolus<<endl;
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended|currentBG BEFORE initial extendedbolus: " <<currentBG<<endl;
+
+        currentBG -= (userProfileManager->getActiveProfile()->getCorrectionFactor() * immediateBolus);
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended|currentBG AFTER initial extendedbolus: " <<currentBG<<endl;
+
+        //updating stats
+        updateInsulinDelivery(time, immediateBolus);
+
+        extendedBolusPhase = 2;
+
+        return;
+
+   }
+   // phase 2: extended bolus portion
+   else if (extendedBolusPhase == 2){
+        cout << "#InsulinPumpDevice/deliverBolusExtended| PHASE 2 IN EFFECT "<<endl;
+
+        extendedBolusTime += 5;
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended| extendedBolusTime: " <<extendedBolusTime<<endl;
+
+        double extendedBolusPercentage = 1 - (double(immediateBolusPercentage)/double(100));
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended| extendedBolusPercentage: " <<extendedBolusPercentage<<endl;
+
+        double extendedBolus = insulinAmountForExtended * extendedBolusPercentage;
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended| extendedBolus: " <<extendedBolus<<endl;
+
+        bolusPerHour = extendedBolus / distributionDuration;
+
+        cout << "#InsulinPumpDevice/deliverBolusExtended| bolusPerHour: " <<bolusPerHour<<endl;
+
+       if (extendedBolusTime == 60){
+           cout << "#InsulinPumpDevice/deliverBolusExtended| currentBG BEFORE extendedBolus: " <<currentBG<<endl;
+           extendedBolusHour += 1;
+           extendedBolusTime = 0;
+           currentBG -= (userProfileManager->getActiveProfile()->getCorrectionFactor() * bolusPerHour);
+           cout << "#InsulinPumpDevice/deliverBolusExtended| currentBG AFTER extendedBolus: " <<currentBG<<endl;
+           cout << "#InsulinPumpDevice/deliverBolusExtended| extendedBolusHour: " <<extendedBolusHour<<endl;
+
+           //updating stats
+           updateInsulinDelivery(time, bolusPerHour);
+
+           //extended bolus is completed
+           if(extendedBolusHour == distributionDuration){
+               extendedBolusHour = 0;
+               extendedBolusPhase = 0;
+               extendedBolusTime = 0;
+               bolusPerHour = 0;
+               cout << "#InsulinPumpDevice/deliverBolusExtended| RESET "<<endl;
+           }
+        }
+    }
 
 }
 
-void InsulinPumpDevice::deliverBolusExtended(int time, double amount, int immediateBolusPercentage, int distributionDuration){
-
-    cout << "#InsulinPumpDevice/deliverBolusExtended" << endl;
-    // Give immediate bolus
-    double immediateBolus = amount * (immediateBolusPercentage/100);
-    currentBG -= (userProfileManager->getActiveProfile()->getCorrectionFactor() * immediateBolus);
-
-    // Extended:
-    int extendedBolusPercentage = 1 - (immediateBolusPercentage/100);
-
-    double extendedBolus = amount * extendedBolusPercentage;
-
-    double bolusPerHour = extendedBolus / distributionDuration;
-
-    // USE bolusPerHour AND distributionDuration TO DELIVER OVER TIME
-
-
-}
 
 void InsulinPumpDevice::readInBGFromCGM(){
     currentBG = cgmSensor->getNextReading();
@@ -98,6 +170,11 @@ double InsulinPumpDevice::calculateBolus(int carbIntake, double currentBG, int c
     calculateInsulinOnBoard(currentTime);
     finalBolus = totalBolus - insulinOnBoard;
 
+    //check edge case when final Bolus is negative
+    if(finalBolus <  0){
+        finalBolus = 0;
+    }
+
     cout<<"#InsulinPD/calculatedBolus; finalBolus: "<<finalBolus<<endl;
 
     return finalBolus;
@@ -129,6 +206,13 @@ void InsulinPumpDevice::calculateInsulinOnBoard(int currentTime){
 
 
 }
+
+void InsulinPumpDevice::deliverBasal(int time){
+    double unitsToDeliver = userProfileManager->getActiveProfile()->getBasalRate();
+    currentBG -= (userProfileManager->getActiveProfile()->getCorrectionFactor() * unitsToDeliver);
+    updateInsulinDelivery(time, unitsToDeliver);
+}
+
 
 double InsulinPumpDevice::getInsulinOnBoard(){
     return insulinOnBoard;
@@ -170,4 +254,54 @@ InsulinCartridge* InsulinPumpDevice::getInsulinCartridge(){
 
 CgmSensor* InsulinPumpDevice::getCgmSensor(){
     return cgmSensor;
+}
+
+int InsulinPumpDevice::getExtendedBolusPhase(){
+    return extendedBolusPhase;
+}
+
+double InsulinPumpDevice::getInsulinAmountForExtended(){
+    return insulinAmountForExtended;
+
+}
+int InsulinPumpDevice::getImmediateBolusPercentage(){
+    return immediateBolusPercentage;
+}
+
+int InsulinPumpDevice::getDistributionDuration(){
+    return distributionDuration;
+
+}
+
+void InsulinPumpDevice::setExtendedBolusPhase(int newExtendedBolusPhase){
+    extendedBolusPhase = newExtendedBolusPhase;
+
+}
+void InsulinPumpDevice::setInsulinAmountForExtended(double newInsulinAmountForExtended){
+    insulinAmountForExtended = newInsulinAmountForExtended;
+
+}
+void InsulinPumpDevice::setImmediateBolusPercentage(int newImmediateBolusPercentage){
+    immediateBolusPercentage = newImmediateBolusPercentage;
+
+}
+void InsulinPumpDevice::setDistributionDuration(int newDistributionDuration){
+    distributionDuration = newDistributionDuration;
+
+}
+
+bool InsulinPumpDevice::getIsStopped(){
+    return isStopped;
+}
+
+void InsulinPumpDevice::setIsStopped(bool newIsStopped){
+   isStopped = newIsStopped;
+}
+
+double InsulinPumpDevice::getBolusPerHour(){
+    return bolusPerHour;
+}
+
+int InsulinPumpDevice::getExtendedBolusTime(){
+    return extendedBolusTime;
 }

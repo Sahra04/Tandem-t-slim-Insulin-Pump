@@ -16,17 +16,24 @@ public:
     ~InsulinPumpDevice();
 
     void deliverBolusDefault(int time, double amount);
-    void deliverBolusExtended(int time, double amount, int immediateBolusPercentage, int distributionDuration);
+    void deliverBolusExtended(int time);
     void calculateInsulinOnBoard(int timepassed);
     double calculateBolus(int carbIntake, double currentBG, int currentTime);
     void readInBGFromCGM();
     void decreaseBatteryLevel();
+    void updateInsulinDelivery(int time, double amount);
+    void deliverBasal(int time);
 
 
     //setters
     void setControlIQMode(bool val);
     void setCurrentBG(double currentBloodGlucose);
     void setCgmMode(bool val);
+    void setExtendedBolusPhase(int newExtendedBolusPhase);
+    void setInsulinAmountForExtended(double newInsulinAmountForExtended);
+    void setImmediateBolusPercentage(int newImmediateBolusPercentage);
+    void setDistributionDuration(int newDistributionDuration);
+    void setIsStopped(bool newIsStopped);
 
     //getters
     UserProfileManager* getUserProfileManager();
@@ -38,6 +45,15 @@ public:
     bool getControlIQMode();
     double getInsulinOnBoard();
 
+    int getExtendedBolusPhase();
+    double getInsulinAmountForExtended();
+    int getImmediateBolusPercentage();
+    int getDistributionDuration();
+    bool getIsStopped(); 
+    double getBolusPerHour();
+    int getExtendedBolusTime();
+
+
 
 
 private:
@@ -46,6 +62,15 @@ private:
     bool controlIQMode;
     double insulinOnBoard;
     double totalInsulinTaken;
+    int extendedBolusHour;
+    int extendedBolusTime;
+    int extendedBolusPhase;
+    double insulinAmountForExtended;
+    int immediateBolusPercentage;
+    int distributionDuration;
+    bool isStopped; 
+    double bolusPerHour; 
+
 
     struct insulinDeliveredDuration {
         double insulinDelivered;

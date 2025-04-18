@@ -1417,6 +1417,28 @@ background-color: rgb(119, 118, 123);</string>
       <string>B</string>
      </property>
     </widget>
+    <widget class="QLabel" name="alert_label">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>0</y>
+       <width>421</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 75 16pt &quot;DejaVu Sans&quot;;
+color: rgb(255, 255, 255);
+
+</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
     <zorder>battery</zorder>
     <zorder>insulin_cartidge</zorder>
     <zorder>home_button</zorder>
@@ -1428,6 +1450,7 @@ background-color: rgb(119, 118, 123);</string>
     <zorder>personal_profile_screen</zorder>
     <zorder>bolus_screen</zorder>
     <zorder>home_screen</zorder>
+    <zorder>alert_label</zorder>
    </widget>
    <widget class="QPushButton" name="recharge_button">
     <property name="geometry">

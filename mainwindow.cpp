@@ -4,9 +4,22 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0)), simulatedTime(QTime(12, 0)), timer(new QTimer(this))
+    , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0)), simulatedTime(QTime(12, 0)), timer(new QTimer(this)), alertDialog(new QDialog(this)), msgBox(new QMessageBox(this))
 {
     ui->setupUi(this);
+
+    //for alert popup
+    alertDialog->setWindowTitle("ALERT");
+    alertDialog->setFixedSize(300, 150);
+
+    textLabel = new QLabel("", alertDialog);
+    okButton = new QPushButton("OK", alertDialog);
+    textLabel->setGeometry(50, 50, 200, 30);  // x, y, width, height
+    textLabel->setAlignment(Qt::AlignCenter);
+
+    okButton->setGeometry(110, 100, 80, 30);
+    connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
+
 
     // Set to how many BG values to be generated
     eventCount = 24;
@@ -53,12 +66,17 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textEdited(QString)), this, SLOT(updateCurrentBGWasEdited()));
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
 
+     connect(ui->stop_resume_button, SIGNAL(released()), this, SLOT(stopOrResumeInsulin()));
+
      connect(timer, &QTimer::timeout, this, &MainWindow::updateTimer);
      timer->start(1000);
 
      makeGraph();
 
      connect(ui->BG_ChangeT, SIGNAL(released()), this, SLOT(changeTimeP()));
+
+     //for alert popup
+     connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
 }
 
 MainWindow::~MainWindow()
@@ -80,11 +98,24 @@ void MainWindow::updateTimer(){
     // If in CGM Mode, read in  value
     if(device->getCgmMode()){
         device->readInBGFromCGM();
+        ui->loglist->addItem(QString(ui->home_time_label->text())  + " CGM Reading: " + QString::number(device->getCurrentBG()) + " mmol/L");
+
+        //check if alert label should expire
+        if(alertLabelTimer == 1){
+            alertLabelTimer = 2;
+        }
 
         if(device->getCurrentBG() < 3.9){
             hypoglycemiaAlert();
+            alertLabelTimer = 1;
+
         } else if(device->getCurrentBG() > 10.0){
             hyperglycemiaAlert();
+            alertLabelTimer = 1;
+
+        }else if (alertLabelTimer == 2){
+            ui->alert_label->clear();
+            alertLabelTimer = 0;
         }
 
         updateBg(device->getCurrentBG());
@@ -100,12 +131,37 @@ void MainWindow::updateTimer(){
         ui->home_iob_label->setText(QString::number(device->getInsulinOnBoard()));
     }
 
+    //phase 2 of extended bolus
+    if(device->getExtendedBolusPhase() == 2){
+        // log: insulin delievered for extended bolus per hour
+        if(device->getExtendedBolusTime() == 55){
+            ui->loglist->addItem(QString(ui->home_time_label->text())  + " EXTENDED BOLUS DELIVERED: " + QString::number(device->getBolusPerHour()) + " units");
+        }
+
+        device->deliverBolusExtended(minuteCounter);
+
+    }
+
+    // Deliver basal insulin at the beginning of every hour
+    if((device->getIsStopped() == false) && (device->getUserProfileManager()->getActiveProfile() != nullptr) && (minuteCounter % 60 == 0)){
+       
+        if(device->getInsulinCartridge()->getInsulinLevel() >= device->getUserProfileManager()->getActiveProfile()->getBasalRate()){
+            device->deliverBasal(minuteCounter);
+            ui->loglist->addItem(QString(ui->home_time_label->text())  + " BASAL DOSE DELIVERED: " + QString::number(device->getUserProfileManager()->getActiveProfile()->getBasalRate()) + " units");
+        } else {
+            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
+            textLabel->setText("NOT ENOUGH INSULIN");
+            alertDialog->show();
+        }
+       
+    }
+
+    
+
     // Depleting battery by 1%
     device->decreaseBatteryLevel();
-
-    if (device->getBattery()->getBatteryLevel() <= 10){
-        lowBatteryAlert();
-    }
+    //Alerting user if in critical battery level
+    lowBatteryAlert();
 
     // Updating UI for battery
     ui->battery->setText(QString::number(device->getBattery()->getBatteryLevel()) + "%");
@@ -115,24 +171,29 @@ void MainWindow::updateTimer(){
  
 }
 
+
 void MainWindow::hypoglycemiaAlert(){
+    cout << "#MainWindow/hypoglycemiaAlert "<< endl;
+
     // Add item to logs list
     ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BLOOD GLUCOSE VERY LOW (HYPOGLYCEMIA)");
 
-    // Go to logs screen
-    go_to_logs();
+
+    ui->alert_label->setText("ALERT: LOW GLUCOSE");
 }
 
 void MainWindow::hyperglycemiaAlert(){
+    cout << "#MainWindow/hyperglycemiaAlert "<< endl;
+
     // Add item to logs list
     ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BLOOD GLUCOSE VERY HIGH (HYPERGLYCEMIA)");
 
-    // Go to logs screen
-    go_to_logs();
+    ui->alert_label->setText("ALERT: HIGH GLUCOSE");
 }
 
 
 void MainWindow::lowBatteryAlert(){
+
     if (device->getBattery()->getBatteryLevel() == 0){
         ui->power_button->setText("Power Off");
 
@@ -142,20 +203,27 @@ void MainWindow::lowBatteryAlert(){
         // Add item to logs list
         ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BATTERY DEAD");
 
-        // Go to logs screen
-        go_to_logs();
+        alertDialog->close();
 
         // Power off
         power();
 
     } else if (device->getBattery()->getBatteryLevel() <= 10){
+
+        //alert
+        if (device->getBattery()->getBatteryLevel() == 10){
+            textLabel->setText("LOW BATTERY");
+            alertDialog->show();
+        }
+
+
         // Add item to logs list
         ui->loglist->addItem(QString(ui->home_time_label->text()) + ": LOW BATTERY");
 
-        // Go to logs screen
-        go_to_logs();
     }
+
 }
+
 // Once the textbox for currentBG was edited, do not overwrite with CGM's reading for currentBG
 void MainWindow::updateCurrentBGWasEdited(){
     currentBGWasEdited = true;
@@ -172,14 +240,13 @@ void MainWindow::updateInsulinValue(){
        return;
    }
 
-
     double finalBolus = device->calculateBolus(ui->bolus_carb_intake_textbox->text().toInt(), ui->bolus_current_BG_textbox->text().toDouble(), time);
 
     cout<<"#MAINWINDOW/updateInsulinValue; before setting"<<endl;
 
     ui->bolus_insulin_dose_textbox->setText(QString::number(finalBolus));
 
-   cout<<"#MAINWINDOW/updateInsulinValue; after settting"<<endl;
+    cout<<"#MAINWINDOW/updateInsulinValue; after settting"<<endl;
 
 
 
@@ -203,6 +270,10 @@ void MainWindow::power() {
 
         // Design choice to hide home  button too
         ui->home_button->setHidden(1);
+
+        //clear alerts
+        ui->alert_label->clear();
+
     } else {
         ui->power_button->setText("Power Off");
         ui->battery->setHidden(0);
@@ -513,27 +584,62 @@ void MainWindow::submitBolusInfo()  {
 
     if(ui->extended_radio_button->isChecked()){
 
-        int deliverNow = ui->bolus_deliver_now_textbox->text().toInt();
-        int distributionDuration = ui->bolus_insulin_duration_textbox->text().toInt();
+
+        device->setInsulinAmountForExtended(ui->bolus_insulin_dose_textbox->text().toDouble());
+        device->setImmediateBolusPercentage(ui->bolus_deliver_now_textbox->text().toInt());
+        device->setDistributionDuration(ui->bolus_insulin_duration_textbox->text().toInt());
+        device->setExtendedBolusPhase(1);
+
+        //if  controlIQ is on the insulin duration cannot be over 2 hours
+        if(device->getControlIQMode() && (device->getDistributionDuration() > 2)){
+            device->setDistributionDuration(2);
+        }
+
+        //phase 1 of extended bolus
+        if(device->getInsulinCartridge()->getInsulinLevel() >= bolusInsulinDose){
+            device->deliverBolusExtended(minuteCounter);
+            //log: the immediate insulin delievered for extended bolus
+            ui->loglist->addItem(QString(ui->home_time_label->text())  + " EXTENDED IMMEDIATE BOLUS DELIVERED: " + QString::number(bolusInsulinDose * (double(device->getImmediateBolusPercentage())/double(100))) + " units");
+        }else {
+            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
+            textLabel->setText("NOT ENOUGH INSULIN");
+            alertDialog->show();
+
+        }
 
         std::cout << "Extended selected\n" << std::endl;
-        std::cout << "Deliver now: " << deliverNow << std::endl;
-        std::cout << "Bolus Distribution Duration: " << distributionDuration << std::endl;
 
-        device->deliverBolusExtended(time, bolusInsulinDose, deliverNow, distributionDuration);
 
     } else {
         std::cout << "Default selected\n" << std::endl;
 
+        //default bolus
         if(device->getInsulinCartridge()->getInsulinLevel() >= bolusInsulinDose){
             device->deliverBolusDefault(minuteCounter, bolusInsulinDose);
+            //log: the insulin delievered for manual bolus
+            ui->loglist->addItem(QString(ui->home_time_label->text())  + " MANUAL BOLUS DELIVERED: " + QString::number(bolusInsulinDose) + " units");
         } else {
             ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
-            go_to_logs();
+            //QMessageBox::about(this, "ALERT", "NOT ENOUGH INSULIN"); 
+            textLabel->setText("NOT ENOUGH INSULIN");
+            alertDialog->show();
         }
 
     }
 }
+
+void MainWindow::stopOrResumeInsulin(){
+    if(device->getIsStopped()){
+        device->setIsStopped(false); // resume basal insulin delivery
+        ui->stop_resume_button->setText("Stop Insulin");
+        std::cout << "MainWindow/stopOrResumeInsulin| INSULIN RESUMED \n" << std::endl;
+    } else { 
+        device->setExtendedBolusPhase(0); // stop extended bolus permanently
+        device->setIsStopped(true); // stop basal insulin delivery
+        ui->stop_resume_button->setText("Resume Insulin");
+        std::cout << "MainWindow/stopOrResumeInsulin| INSULIN STOPPED \n" << std::endl;
+    }
+} 
 
 void MainWindow::setCgmMode(){
     device->setCgmMode(ui->cgm_checkBox->isChecked());
@@ -589,6 +695,11 @@ void MainWindow::makeGraph(){
 
     ui->bgGraph->graph(1)->setData(timeRec,bgHighLimit);
     ui->bgGraph->graph(2)->setData(timeRec, bgLowLimit);
+
+    //change graph color to yellow  plot line
+    QPen pen;
+    pen.setColor(Qt::yellow);
+    ui->bgGraph->graph(0)->setPen(pen);
 
     ui->bgGraph->replot();
 
