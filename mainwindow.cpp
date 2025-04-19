@@ -68,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent)
 
      connect(ui->stop_resume_button, SIGNAL(released()), this, SLOT(stopOrResumeInsulin()));
 
+     connect(ui->bolus_insulin_duration_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkInsulinDuration()));
+
      connect(timer, &QTimer::timeout, this, &MainWindow::updateTimer);
      timer->start(1000);
 
@@ -77,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent)
 
      //for alert popup
      connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
+
+     connect(ui->quick_bolus_button, SIGNAL(released()), this, SLOT(giveQuickBolus()));
 }
 
 MainWindow::~MainWindow()
@@ -250,6 +254,23 @@ void MainWindow::updateInsulinValue(){
 
 
 
+}
+
+// Makes sure insulin duration is valid
+void MainWindow::checkInsulinDuration(){
+    if(ui->extended_radio_button->isChecked()){
+        if(ui->bolus_insulin_duration_textbox->text().toInt() > 8){
+            ui->bolus_insulin_duration_textbox->setText(QString::number(8));
+        } 
+        if(ui->bolus_insulin_duration_textbox->text().toInt() < 1){
+            ui->bolus_insulin_duration_textbox->setText(QString::number(1));
+        } 
+
+        if(device->getControlIQMode() && ui->bolus_insulin_duration_textbox->text().toInt() > 2){
+            ui->bolus_insulin_duration_textbox->setText(QString::number(2));
+        }
+    }
+    
 }
 
 void MainWindow::power() {
@@ -641,11 +662,37 @@ void MainWindow::stopOrResumeInsulin(){
     }
 } 
 
+void MainWindow::giveQuickBolus(){
+    if(device->getUserProfileManager()->getActiveProfile()){
+
+        double quickBolusUnits = device->getUserProfileManager()->getActiveProfile()->getquickBolusUnits();
+        if(device->getInsulinCartridge()->getInsulinLevel() >= quickBolusUnits){
+            device->deliverBolusDefault(minuteCounter, quickBolusUnits);
+            //log: the insulin delievered for quick bolus
+            ui->loglist->addItem(QString(ui->home_time_label->text())  + " QUICK BOLUS DELIVERED: " + QString::number(quickBolusUnits) + " units");
+        } else {
+            ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
+            textLabel->setText("NOT ENOUGH INSULIN");
+            alertDialog->show();
+        }
+    }
+}
+
 void MainWindow::setCgmMode(){
     device->setCgmMode(ui->cgm_checkBox->isChecked());
+
+    if(ui->cgm_checkBox->isChecked() == false){
+        ui->control_IQ_checkBox->setChecked(0);
+    }
 }
 void MainWindow::setControlIQMode(){
     device->setControlIQMode(ui->control_IQ_checkBox->isChecked());
+
+
+    if(ui->control_IQ_checkBox->isChecked()){
+            ui->cgm_checkBox->setChecked(1);
+    }
+    device->setExtendedBolusPhase(0); // stop extended bolus permanently
 }
 
 void MainWindow::test_bgGraph(){

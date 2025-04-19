@@ -83,7 +83,9 @@ private slots:
     void ActivateProfileClicked(const QModelIndex &index);
     void updateInsulinValue();
     void updateCurrentBGWasEdited();
+    void checkInsulinDuration();
     void stopOrResumeInsulin();
+    void giveQuickBolus();
 
     void updateTimer();
     void lowBatteryAlert();
