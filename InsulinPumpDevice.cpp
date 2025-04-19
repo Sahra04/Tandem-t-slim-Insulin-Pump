@@ -14,6 +14,7 @@ InsulinPumpDevice::InsulinPumpDevice(double currentBloodGlucose)
     extendedBolusPhase = 0;
     isStopped = false; 
     bolusPerHour = 0;
+    correctionBolusInitiated = false;
 }
 
 InsulinPumpDevice::~InsulinPumpDevice(){
@@ -34,6 +35,8 @@ void InsulinPumpDevice::deliverBolusDefault(int time, double amount){
 
     cout << "#InsulinPumpDevice/deliverBolusDefault  currentBG: "<< currentBG << endl;
 
+
+    cgmSensor->setSimulatedBgValues(currentBG);
     //updating stats
     updateInsulinDelivery(time, amount);
 
@@ -43,7 +46,7 @@ void InsulinPumpDevice::updateInsulinDelivery(int time, double amount){
 
     // Add to read vector
     //cgmSensor->addToRead(currentBG);
-    cgmSensor->setSimulatedBgValues(currentBG);
+    //cgmSensor->setSimulatedBgValues(currentBG);
 
     // check if BG too low/high
 
@@ -85,6 +88,7 @@ void InsulinPumpDevice::deliverBolusExtended(int time){
 
         cout << "#InsulinPumpDevice/deliverBolusExtended|currentBG AFTER initial extendedbolus: " <<currentBG<<endl;
 
+        cgmSensor->setSimulatedBgValues(currentBG);
         //updating stats
         updateInsulinDelivery(time, immediateBolus);
 
@@ -121,6 +125,7 @@ void InsulinPumpDevice::deliverBolusExtended(int time){
            cout << "#InsulinPumpDevice/deliverBolusExtended| currentBG AFTER extendedBolus: " <<currentBG<<endl;
            cout << "#InsulinPumpDevice/deliverBolusExtended| extendedBolusHour: " <<extendedBolusHour<<endl;
 
+           cgmSensor->setSimulatedBgValues(currentBG);
            //updating stats
            updateInsulinDelivery(time, bolusPerHour);
 
@@ -181,6 +186,12 @@ double InsulinPumpDevice::calculateBolus(int carbIntake, double currentBG, int c
 
 }
 
+double InsulinPumpDevice::calculatateCorrectionBolus(double currentBG){
+    double correctionBolus = (currentBG - userProfileManager->getActiveProfile()->gettargetBGlevel()) /
+                             userProfileManager->getActiveProfile()->getCorrectionFactor();
+    return correctionBolus;
+}
+
 
 void InsulinPumpDevice::calculateInsulinOnBoard(int currentTime){
 
@@ -208,9 +219,9 @@ void InsulinPumpDevice::calculateInsulinOnBoard(int currentTime){
 }
 
 void InsulinPumpDevice::deliverBasal(int time){
-    double unitsToDeliver = userProfileManager->getActiveProfile()->getBasalRate();
-    currentBG -= (userProfileManager->getActiveProfile()->getCorrectionFactor() * unitsToDeliver);
-    updateInsulinDelivery(time, unitsToDeliver);
+    // double unitsToDeliver = userProfileManager->getActiveProfile()->getBasalRate();
+    //currentBG -= (userProfileManager->getActiveProfile()->getCorrectionFactor() * unitsToDeliver);
+    updateInsulinDelivery(time, currentBasalRate);
 }
 
 
@@ -290,6 +301,15 @@ void InsulinPumpDevice::setDistributionDuration(int newDistributionDuration){
 
 }
 
+void InsulinPumpDevice::setCurrentBasalRate(double newCurrentBasalRate) {
+    currentBasalRate = newCurrentBasalRate;
+    
+}
+
+double InsulinPumpDevice::getCurrentBasalRate(){
+    return currentBasalRate;
+}
+
 bool InsulinPumpDevice::getIsStopped(){
     return isStopped;
 }
@@ -304,4 +324,11 @@ double InsulinPumpDevice::getBolusPerHour(){
 
 int InsulinPumpDevice::getExtendedBolusTime(){
     return extendedBolusTime;
+}
+
+void InsulinPumpDevice::setCorrectionBolusInitiated(bool newCorrectionBolusInitiated){
+    correctionBolusInitiated = newCorrectionBolusInitiated;
+}
+bool InsulinPumpDevice::getCorrectionBolusInitiated(){
+    return correctionBolusInitiated;
 }

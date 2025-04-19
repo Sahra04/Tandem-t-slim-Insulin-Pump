@@ -23,6 +23,7 @@ public:
     void decreaseBatteryLevel();
     void updateInsulinDelivery(int time, double amount);
     void deliverBasal(int time);
+    double calculatateCorrectionBolus(double currentBG);
 
 
     //setters
@@ -34,7 +35,8 @@ public:
     void setImmediateBolusPercentage(int newImmediateBolusPercentage);
     void setDistributionDuration(int newDistributionDuration);
     void setIsStopped(bool newIsStopped);
-
+    void setCurrentBasalRate(double currentBasalRate);
+    void setCorrectionBolusInitiated(bool newCorrectionBolusInitiated);
     //getters
     UserProfileManager* getUserProfileManager();
     Battery* getBattery();
@@ -44,7 +46,6 @@ public:
     double getCurrentBG();
     bool getControlIQMode();
     double getInsulinOnBoard();
-
     int getExtendedBolusPhase();
     double getInsulinAmountForExtended();
     int getImmediateBolusPercentage();
@@ -52,6 +53,9 @@ public:
     bool getIsStopped(); 
     double getBolusPerHour();
     int getExtendedBolusTime();
+    double getCurrentBasalRate();
+    bool getCorrectionBolusInitiated();
+    
 
 
 
@@ -70,6 +74,8 @@ private:
     int distributionDuration;
     bool isStopped; 
     double bolusPerHour; 
+    double currentBasalRate;
+    bool correctionBolusInitiated; 
 
 
     struct insulinDeliveredDuration {

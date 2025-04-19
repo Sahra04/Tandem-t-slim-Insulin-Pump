@@ -12,6 +12,7 @@
 #include <QTime>
 #include <QMessageBox>
 #include <QDialog>
+#include <QRandomGenerator>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -84,6 +85,11 @@ private slots:
     void updateInsulinValue();
     void updateCurrentBGWasEdited();
     void checkInsulinDuration();
+    void checkProfileCorrectionFactor();
+    void checkProfileCarbRatio();
+    void checkProfileBasalRate();
+    void checkTargetBG();
+    void checkProfileInsulinDuration();
     void stopOrResumeInsulin();
     void giveQuickBolus();
 
