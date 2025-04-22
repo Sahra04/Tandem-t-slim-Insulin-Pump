@@ -1,8 +1,5 @@
 #include "UserProfileManager.h"
 
-
-//SB: Still in PROGRESS!
-
 UserProfileManager::UserProfileManager()
 {
 
@@ -65,6 +62,8 @@ UserProfile* UserProfileManager::getprofile(const string profileName){
     return returnUserProfile;
 
 }
+
+//return vector of profiles
 const std::vector<UserProfile*>& UserProfileManager::getAllProfiles() const {
     return userProfiles;
 }

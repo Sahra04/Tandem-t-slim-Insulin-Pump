@@ -24,6 +24,7 @@ class UserProfileManager
         void setActiveProfile(const std::string& profileName);
         UserProfile* getActiveProfile();
 
+        //will store UserProfile Objects
         vector<UserProfile*> userProfiles;
 
 };

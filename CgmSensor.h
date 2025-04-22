@@ -10,12 +10,10 @@ class CgmSensor {
 private:
     int valueTracker;
     vector<double> simulatedBgValues;
-    //vector<double> readBgValues; // to be plotted on graph
 
 public:
     CgmSensor();
     double getNextReading();
-    //void addToRead(double newBgValue);
     int getValueTracker();
     void setSimulatedBgValues(double newValue);    
 };

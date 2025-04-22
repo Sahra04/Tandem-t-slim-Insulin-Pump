@@ -37,6 +37,7 @@ public:
     void setIsStopped(bool newIsStopped);
     void setCurrentBasalRate(double currentBasalRate);
     void setCorrectionBolusInitiated(bool newCorrectionBolusInitiated);
+
     //getters
     UserProfileManager* getUserProfileManager();
     Battery* getBattery();

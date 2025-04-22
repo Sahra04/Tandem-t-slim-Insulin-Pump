@@ -4,7 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0)), simulatedTime(QTime(12, 0)), timer(new QTimer(this)), alertDialog(new QDialog(this)), msgBox(new QMessageBox(this))
+    , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0)), simulatedTime(QTime(12, 0)), timer(new QTimer(this)), alertDialog(new QDialog(this))
 {
     ui->setupUi(this);
 
@@ -19,10 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     okButton->setGeometry(110, 100, 80, 30);
     connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
-
-
-    // Set to how many BG values to be generated
-    eventCount = 24;
 
     // Seed for randomly generating BG values
     std::srand(std::time(0));
@@ -61,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
 
      connect(ui->bolus_carb_intake_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textEdited(QString)), this, SLOT(updateCurrentBGWasEdited()));
+     connect(ui->bolus_insulin_dose_textbox,  SIGNAL(textEdited(QString)), this, SLOT(updateInsulinDoseWasEdited())); //sb
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
 
      connect(ui->stop_resume_button, SIGNAL(released()), this, SLOT(stopOrResumeInsulin()));
@@ -74,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
      connect(ui->basal_rate_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkProfileBasalRate()));
      connect(ui->insulin_duration_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkProfileInsulinDuration()));
      connect(ui->target_BG_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkTargetBG()));
+     connect(ui->bolus_insulin_dose_textbox,  SIGNAL(textChanged(QString)), this, SLOT(checkBolusInsulinDose()));
 
      connect(timer, &QTimer::timeout, this, &MainWindow::updateTimer);
      timer->start(1000);
@@ -99,24 +97,31 @@ void MainWindow::updateTimer(){
     //add 5 simulated minutes 
     simulatedTime = simulatedTime.addSecs(300);
     minuteCounter += 5;
+    std::cout << "#MainWindow/updateTimer point 2"<<std::endl;
 
     //update UI time
     ui->home_time_label->setText(simulatedTime.toString("hh:mm"));
 
-    // If in CGM Mode, read in  value
-    if(device->getCgmMode()){
-        device->readInBGFromCGM();
+    std::cout << "#MainWindow/updateTimer point 3" <<std::endl;
 
-         ui->loglist->addItem(QString(ui->home_time_label->text())  + " BEFORE CGM Reading: " + QString::number(device->getCurrentBG()) + " mmol/L");
+    // If in CGM Mode, read in value
+    if(device->getCgmMode()){
+        std::cout << "#MainWindow/updateTimer point 4" <<std::endl;
+        device->readInBGFromCGM();
+        std::cout << "#MainWindow/updateTimer point 5" <<std::endl;
+
+        ui->loglist->addItem(QString(ui->home_time_label->text())  + " BEFORE CGM Reading: " + QString::number(device->getCurrentBG()) + " mmol/L");
        
-        //prediction value for controlIQ
-        double randomNumber = (2.0 * rand() / RAND_MAX) - 1.0;
-        cout<<"RANDOMNUMBER: "<<randomNumber<<endl;
-        double predictedBG = device->getCurrentBG() + randomNumber;
-        cout<<"PREDICTEDBG: "<<predictedBG<<endl;
 
         //If controlIQ detects problem (predictedBG not in 6.3 - 8.9)
         if(device->getUserProfileManager()->getActiveProfile() != nullptr){
+
+            //prediction value for controlIQ
+            double randomNumber = (2.0 * rand() / RAND_MAX) - 1.0;
+            cout<<"RANDOMNUMBER: "<<randomNumber<<endl;
+            double predictedBG = ((device->getCurrentBG()) - ((device->getInsulinOnBoard())*(device->getUserProfileManager()->getActiveProfile()->getCorrectionFactor()))) + randomNumber;
+            cout<<"PREDICTEDBG: "<<predictedBG<<endl;
+
 
             if(device->getControlIQMode() && (predictedBG < 6.3 || predictedBG > 8.9)) {
                 // if predictedBG is high               9.0 - 10.0
@@ -157,16 +162,71 @@ void MainWindow::updateTimer(){
             }else{
                 // normal basal (predictedBG is in 6.3 - 8.9)
                 device->setCurrentBasalRate(device->getUserProfileManager()->getActiveProfile()->getBasalRate());
-                cout<<"UpdateTimer:  Basal Rate Rate: "<<device->getCurrentBasalRate()<< " units"<<endl;
+                cout<<"UpdateTimer:  Basal Rate Normal: "<<device->getCurrentBasalRate()<< " units"<<endl;
                 ui->loglist->addItem(QString(ui->home_time_label->text())  + " Basal Rate Normal: " + QString::number(device->getCurrentBasalRate()) + " units");
             }
         }
 
 
-        //check if alert label should expire
-        if(alertLabelTimer == 1){
-            alertLabelTimer = 2;
+    } else {
+        // not in CGM mode
+        // setting basal rate to user's profile
+        std::cout << "#MainWindow/updateTimer point 6" <<std::endl;
+        if(device->getUserProfileManager()->getActiveProfile() != nullptr){
+            device->setCurrentBasalRate(device->getUserProfileManager()->getActiveProfile()->getBasalRate());
+            cout<<"UpdateTimer:  Basal Rate Normal: "<<device->getCurrentBasalRate()<< " units"<<endl;
+            ui->loglist->addItem(QString(ui->home_time_label->text())  + " Basal Rate Normal: " + QString::number(device->getCurrentBasalRate()) + " units");
         }
+    }
+
+    // CAN MOVE OUT OF CGM CHECK
+    // If insulin is not stopped, basal insulin should affect next CGM reading
+    if((device->getIsStopped() == false) && (device->getUserProfileManager()->getActiveProfile() != nullptr)) {
+        
+        // Will only happen if in ControlIQ mode
+        if(device->getCorrectionBolusInitiated() == true){
+            //update insulin cartridge & iob
+            if(device->getInsulinCartridge()->getInsulinLevel() >= device->calculatateCorrectionBolus(device->getCurrentBG())){
+                device->updateInsulinDelivery(minuteCounter, device->calculatateCorrectionBolus(device->getCurrentBG()));
+                ui->loglist->addItem(QString(ui->home_time_label->text())  + ": CORRECTION DOSE DELIVERED: " + QString::number(device->calculatateCorrectionBolus(device->getCurrentBG())) + " units");
+            } else {
+                ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
+                textLabel->setText("NOT ENOUGH INSULIN");
+                alertDialog->show();
+            }
+
+            device->setCurrentBG(device->getCurrentBG() - device->calculatateCorrectionBolus(device->getCurrentBG()));
+            device->setCorrectionBolusInitiated(false);
+                
+        }else {
+
+            //update insulin cartridge & iob
+            if(device->getInsulinCartridge()->getInsulinLevel() >= (device->getCurrentBasalRate() / 12.0)){
+                device->updateInsulinDelivery(minuteCounter, (device->getCurrentBasalRate() / 12.0));
+                ui->loglist->addItem(QString(ui->home_time_label->text())  + " BASAL DOSE DELIVERED: " + QString::number((device->getCurrentBasalRate() / 12.0)) + " units");
+                device->setCurrentBG((device->getCurrentBG()) - ((device->getInsulinOnBoard())*(device->getUserProfileManager()->getActiveProfile()->getCorrectionFactor())));
+            } else {
+                ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
+                textLabel->setText("NOT ENOUGH INSULIN");
+                alertDialog->show();
+            }
+
+        }
+        
+    }   
+
+    if(device->getCurrentBG() < 0){
+            device->setCurrentBG(0);
+    }
+
+
+    //check if alert label should expire
+    if(alertLabelTimer == 1){
+        alertLabelTimer = 2;
+    }
+
+    // Only if CGM mode is on
+    if(device->getCgmMode()) {
         if(device->getCurrentBG() < 3.9){
             hypoglycemiaAlert();
             alertLabelTimer = 1;
@@ -179,63 +239,21 @@ void MainWindow::updateTimer(){
             ui->alert_label->clear();
             alertLabelTimer = 0;
         }
-    
-        // If insulin is not stopped, basal insulin should affect next CGM reading
-        if((device->getIsStopped() == false) && (device->getUserProfileManager()->getActiveProfile() != nullptr)) {
-            
-            if(device->getCorrectionBolusInitiated() == true){
-                //update insulin cartridge & iob
-                if(device->getInsulinCartridge()->getInsulinLevel() >= device->calculatateCorrectionBolus(device->getCurrentBG())){
-                    device->updateInsulinDelivery(minuteCounter, device->calculatateCorrectionBolus(device->getCurrentBG()));
-                    ui->loglist->addItem(QString(ui->home_time_label->text())  + " CORRECTION DOSE DELIVERED: " + QString::number(device->calculatateCorrectionBolus(device->getCurrentBG())) + " units");
-                } else {
-                    ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
-                    textLabel->setText("NOT ENOUGH INSULIN");
-                    alertDialog->show();
-                }
-
-                device->setCurrentBG(device->getCurrentBG() - device->calculatateCorrectionBolus(device->getCurrentBG()));
-                device->setCorrectionBolusInitiated(false);
-                    
-            }else {
-
-                device->setCurrentBG((device->getCurrentBG()) - ((device->getCurrentBasalRate() / 12.0)*(device->getUserProfileManager()->getActiveProfile()->getCorrectionFactor())));
-
-                //update insulin cartridge & iob
-                if(device->getInsulinCartridge()->getInsulinLevel() >= (device->getCurrentBasalRate() / 12.0)){
-                    device->updateInsulinDelivery(minuteCounter, (device->getCurrentBasalRate() / 12.0));
-                    ui->loglist->addItem(QString(ui->home_time_label->text())  + " BASAL DOSE DELIVERED: " + QString::number((device->getCurrentBasalRate() / 12.0)) + " units");
-                } else {
-                    ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
-                    textLabel->setText("NOT ENOUGH INSULIN");
-                    alertDialog->show();
-                }
-
-            }
-            
-        
-            if(device->getCurrentBG() < 0){
-                 device->setCurrentBG(0);
-            }
-
-            
-        }
 
         ui->loglist->addItem(QString(ui->home_time_label->text())  + "AFTER CGM Reading: " + QString::number(device->getCurrentBG()) + " mmol/L");
 
-       
         updateBg(device->getCurrentBG());
 
-        cout<<"currentBG: "<<device->getCurrentBG()<<endl;
-        cout<<"currentBGWasEdited: "<< currentBGWasEdited << endl;
-
+        // Updating currentBG on Manual Bolus screen
         if (currentBGWasEdited == false){
             ui->bolus_current_BG_textbox->setText(QString::number(device->getCurrentBG()));
         }
+
+        // Updating currentBG on Home screen
         ui->home_current_BG_label->setText(QString::number(device->getCurrentBG()));
-        device->calculateInsulinOnBoard(minuteCounter);
-        ui->home_iob_label->setText(QString::number(device->getInsulinOnBoard()));
+
     }
+    
 
     //phase 2 of extended bolus
     if(device->getExtendedBolusPhase() == 2){
@@ -249,10 +267,10 @@ void MainWindow::updateTimer(){
         }
 
         device->deliverBolusExtended(minuteCounter);
-
     }
 
-
+    //Still showing the updated IOB with or without CGM mode on
+    ui->home_iob_label->setText(QString::number(device->getInsulinOnBoard()));
 
     // Depleting battery by 1%
     device->decreaseBatteryLevel();
@@ -295,6 +313,7 @@ void MainWindow::lowBatteryAlert(){
 
         // Stop reading in BG values
         device->setCgmMode(false);
+        ui->cgm_checkBox->setChecked(0);
 
         // Add item to logs list
         ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BATTERY DEAD");
@@ -317,6 +336,11 @@ void MainWindow::lowBatteryAlert(){
         ui->loglist->addItem(QString(ui->home_time_label->text()) + ": LOW BATTERY");
 
     }
+
+}
+
+void MainWindow::updateInsulinDoseWasEdited(){
+    currentBGWasEdited = true;
 
 }
 
@@ -419,6 +443,16 @@ void  MainWindow::checkTargetBG(){
     }
 }
 
+void MainWindow::checkBolusInsulinDose(){
+    if(ui->bolus_insulin_dose_textbox->text().toDouble() < 0.05){
+        ui->bolus_insulin_dose_textbox->setText(QString::number(0.05));
+    }
+    else if (ui->bolus_insulin_dose_textbox->text().toDouble() > 25){
+         ui->bolus_insulin_dose_textbox->setText(QString::number(25));
+
+    }
+}
+
 void MainWindow::power() {
 
     if (ui->power_button->text() == "Power Off") {
@@ -468,10 +502,6 @@ void MainWindow::go_to_options(){
 
 void MainWindow::rechargeDevice(){
     std::cout << "#MainWindow/rechargeDevice"<<std::endl;
-
-    // Set CGM Mode back on
-    device->setCgmMode(true);
-    ui->cgm_checkBox->isChecked();
 
     ui->battery->setText("100%");
     device->getBattery()->rechargeBattery();
@@ -728,6 +758,9 @@ void MainWindow::go_to_home(){
     ui->home_screen->setHidden(0);
 
     std::cout << "HOME BUTTON"<<std::endl;
+
+    //want automatic fill in resumed
+    currentBGWasEdited = false;
 
 }
 
