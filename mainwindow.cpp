@@ -6,84 +6,68 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), device(new InsulinPumpDevice(6.0)), simulatedTime(QTime(12, 0)), timer(new QTimer(this)), alertDialog(new QDialog(this))
 {
-    ui->setupUi(this);
+     ui->setupUi(this);
 
-    //for alert popup
-    alertDialog->setWindowTitle("ALERT");
-    alertDialog->setFixedSize(300, 150);
+     //for alert popup
+     alertDialog->setWindowTitle("ALERT");
+     alertDialog->setFixedSize(300, 150);
 
-    textLabel = new QLabel("", alertDialog);
-    okButton = new QPushButton("OK", alertDialog);
-    textLabel->setGeometry(50, 50, 200, 30);  // x, y, width, height
-    textLabel->setAlignment(Qt::AlignCenter);
+     textLabel = new QLabel("", alertDialog);
+     okButton = new QPushButton("OK", alertDialog);
+     textLabel->setGeometry(50, 50, 200, 30);  // x, y, width, height
+     textLabel->setAlignment(Qt::AlignCenter);
 
-    okButton->setGeometry(110, 100, 80, 30);
-    connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
+     okButton->setGeometry(110, 100, 80, 30);
+     connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
 
-    // Seed for randomly generating BG values
-    std::srand(std::time(0));
+     // Seed for randomly generating BG values
+     std::srand(std::time(0));
 
-    // set inital graph time period
-    currTimePeriod = 0;
+     // set inital graph time period
+     currTimePeriod = 0;
 
-     // recharge and refill
+
      connect(ui->recharge_button, SIGNAL(released()), this, SLOT(rechargeDevice()));
      connect(ui->insulin_refill_button, SIGNAL(released()), this, SLOT(refillCartridge()));
-
-     // For testing only
      connect(ui->logs_screen_button, SIGNAL(released()), this, SLOT(go_to_logs()));
      connect(ui->personal_profiles_screen_button, SIGNAL(released()), this, SLOT(go_to_profiles_list()));
      connect(ui->current_status_button, SIGNAL(released()), this, SLOT(go_to_current_status()));
-
-    // Home related signals and slots
      connect(ui->home_button, SIGNAL(released()), this, SLOT(go_to_home()));
      connect(ui->home_options_button, SIGNAL(released()), this, SLOT(go_to_options()));
      connect(ui->home_bolus_button, SIGNAL(released()), this, SLOT(go_to_bolus()));
      connect(ui->power_button, SIGNAL(released()), this, SLOT(power()));
-
-     // Profile related signals and slots
      connect(ui->personal_profiles_list_add_button, SIGNAL(released()), this, SLOT(add_profile()));
      connect(ui->edit_profile_button, SIGNAL(released()), this, SLOT(edit_button()));
      connect(ui->delete_profile_button, SIGNAL(released()), this, SLOT(delete_profile()));
      connect(ui->personal_profiles_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(profile_item_clicked(QListWidgetItem*)));
      connect(ui->activateDropdown->view(), &QAbstractItemView::pressed,this, &MainWindow::ActivateProfileClicked);
-
-     // Bolus related signals and slots
      connect(ui->extended_radio_button, SIGNAL(toggled(bool)), this, SLOT(setExtended()));
      connect(ui->bolus_ok_button, SIGNAL(released()), this, SLOT(submitBolusInfo()));
-
      connect(ui->control_IQ_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setControlIQMode()));
      connect(ui->cgm_checkBox,  SIGNAL(toggled(bool)), this, SLOT(setCgmMode()));
-
      connect(ui->bolus_carb_intake_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textEdited(QString)), this, SLOT(updateCurrentBGWasEdited()));
      connect(ui->bolus_insulin_dose_textbox,  SIGNAL(textEdited(QString)), this, SLOT(updateInsulinDoseWasEdited())); //sb
      connect(ui->bolus_current_BG_textbox,  SIGNAL(textChanged(QString)), this, SLOT(updateInsulinValue()));
-
      connect(ui->stop_resume_button, SIGNAL(released()), this, SLOT(stopOrResumeInsulin()));
-
-     // Ensure valid input for manual bolus
      connect(ui->bolus_insulin_duration_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkInsulinDuration()));
-
-     // Ensure valid input for profiles
      connect(ui->correction_factor_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkProfileCorrectionFactor()));
      connect(ui->carb_ratio_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkProfileCarbRatio()));
      connect(ui->basal_rate_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkProfileBasalRate()));
      connect(ui->insulin_duration_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkProfileInsulinDuration()));
      connect(ui->target_BG_textbox,  SIGNAL(textEdited(QString)), this, SLOT(checkTargetBG()));
      connect(ui->bolus_insulin_dose_textbox,  SIGNAL(textChanged(QString)), this, SLOT(checkBolusInsulinDose()));
+     connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
+     connect(ui->quick_bolus_button, SIGNAL(released()), this, SLOT(giveQuickBolus()));
 
      connect(timer, &QTimer::timeout, this, &MainWindow::updateTimer);
      timer->start(1000);
 
      makeGraph();
-
      connect(ui->BG_ChangeT, SIGNAL(released()), this, SLOT(changeTimeP()));
 
-     //for alert popup
-     connect(okButton, &QPushButton::clicked, alertDialog, &QDialog::close);
 
-     connect(ui->quick_bolus_button, SIGNAL(released()), this, SLOT(giveQuickBolus()));
+
 }
 
 MainWindow::~MainWindow()
@@ -93,35 +77,24 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::updateTimer(){
-    std::cout << "#MainWindow/updateTimer"<<std::endl;
     //add 5 simulated minutes 
     simulatedTime = simulatedTime.addSecs(300);
     minuteCounter += 5;
-    std::cout << "#MainWindow/updateTimer point 2"<<std::endl;
 
     //update UI time
     ui->home_time_label->setText(simulatedTime.toString("hh:mm"));
 
-    std::cout << "#MainWindow/updateTimer point 3" <<std::endl;
-
     // If in CGM Mode, read in value
     if(device->getCgmMode()){
-        std::cout << "#MainWindow/updateTimer point 4" <<std::endl;
         device->readInBGFromCGM();
-        std::cout << "#MainWindow/updateTimer point 5" <<std::endl;
 
-        ui->loglist->addItem(QString(ui->home_time_label->text())  + " BEFORE CGM Reading: " + QString::number(device->getCurrentBG()) + " mmol/L");
-       
 
         //If controlIQ detects problem (predictedBG not in 6.3 - 8.9)
         if(device->getUserProfileManager()->getActiveProfile() != nullptr){
 
             //prediction value for controlIQ
             double randomNumber = (2.0 * rand() / RAND_MAX) - 1.0;
-            cout<<"RANDOMNUMBER: "<<randomNumber<<endl;
             double predictedBG = ((device->getCurrentBG()) - ((device->getInsulinOnBoard())*(device->getUserProfileManager()->getActiveProfile()->getCorrectionFactor()))) + randomNumber;
-            cout<<"PREDICTEDBG: "<<predictedBG<<endl;
-
 
             if(device->getControlIQMode() && (predictedBG < 6.3 || predictedBG > 8.9)) {
                 // if predictedBG is high               9.0 - 10.0
@@ -132,7 +105,7 @@ void MainWindow::updateTimer(){
                         device->setCurrentBasalRate(15);
                     }
 
-                    cout<<"UpdateTimer:  Basal Rate Increased: "<<device->getCurrentBasalRate()<< " units"<<endl;
+
                     ui->loglist->addItem(QString(ui->home_time_label->text())  + " Basal Rate Increased: " + QString::number(device->getCurrentBasalRate()) + " units");
                 }
                 // else if predictedBG is low           3.9 - 6.2
@@ -144,25 +117,22 @@ void MainWindow::updateTimer(){
                         device->setCurrentBasalRate(0);
                     }
 
-                    cout<<"UpdateTimer:  Basal Rate Decreased: "<<device->getCurrentBasalRate()<< " units"<<endl;
+
                     ui->loglist->addItem(QString(ui->home_time_label->text())  + " Basal Rate Decreased: " + QString::number(device->getCurrentBasalRate()) + " units");
                 } 
                 // else if predictedBG is veryhigh      10.1 - 15.0
                 else if(predictedBG >= 10.1 && predictedBG <= 15.0){
                     // in correction bolus
-                    cout<<"UpdateTimer:  Correction Bolus: "<<device->calculatateCorrectionBolus(device->getCurrentBG())<<" units"<<endl;
                     device->setCorrectionBolusInitiated(true);
                 }
                 // else if predictedBG is veryLow       0.0 - 3.8
                 else if(predictedBG >= 0.0 && predictedBG <= 3.8){
                     device->setCurrentBasalRate(0);
-                    cout<<"UpdateTimer:  Basal Rate Set to 0: "<<device->getCurrentBasalRate()<< " units"<<endl;
                     ui->loglist->addItem(QString(ui->home_time_label->text())  + " Basal Rate Stopped: " + QString::number(device->getCurrentBasalRate()) + " units");
                 }
             }else{
                 // normal basal (predictedBG is in 6.3 - 8.9)
                 device->setCurrentBasalRate(device->getUserProfileManager()->getActiveProfile()->getBasalRate());
-                cout<<"UpdateTimer:  Basal Rate Normal: "<<device->getCurrentBasalRate()<< " units"<<endl;
                 ui->loglist->addItem(QString(ui->home_time_label->text())  + " Basal Rate Normal: " + QString::number(device->getCurrentBasalRate()) + " units");
             }
         }
@@ -171,15 +141,12 @@ void MainWindow::updateTimer(){
     } else {
         // not in CGM mode
         // setting basal rate to user's profile
-        std::cout << "#MainWindow/updateTimer point 6" <<std::endl;
         if(device->getUserProfileManager()->getActiveProfile() != nullptr){
             device->setCurrentBasalRate(device->getUserProfileManager()->getActiveProfile()->getBasalRate());
-            cout<<"UpdateTimer:  Basal Rate Normal: "<<device->getCurrentBasalRate()<< " units"<<endl;
             ui->loglist->addItem(QString(ui->home_time_label->text())  + " Basal Rate Normal: " + QString::number(device->getCurrentBasalRate()) + " units");
         }
     }
 
-    // CAN MOVE OUT OF CGM CHECK
     // If insulin is not stopped, basal insulin should affect next CGM reading
     if((device->getIsStopped() == false) && (device->getUserProfileManager()->getActiveProfile() != nullptr)) {
         
@@ -213,7 +180,16 @@ void MainWindow::updateTimer(){
 
         }
         
-    }   
+    } else {
+
+        //when insulin is stopped, Insulin on board should decrease as time goes
+        if(device->getUserProfileManager()->getActiveProfile() != nullptr){
+          device->calculateInsulinOnBoard(minuteCounter);
+          device->setCurrentBG((device->getCurrentBG()) - ((device->getInsulinOnBoard())*(device->getUserProfileManager()->getActiveProfile()->getCorrectionFactor())));
+        }
+
+
+    }
 
     if(device->getCurrentBG() < 0){
             device->setCurrentBG(0);
@@ -240,7 +216,7 @@ void MainWindow::updateTimer(){
             alertLabelTimer = 0;
         }
 
-        ui->loglist->addItem(QString(ui->home_time_label->text())  + "AFTER CGM Reading: " + QString::number(device->getCurrentBG()) + " mmol/L");
+        ui->loglist->addItem(QString(ui->home_time_label->text())  + ": CGM Reading: " + QString::number(device->getCurrentBG()) + " mmol/L");
 
         updateBg(device->getCurrentBG());
 
@@ -287,7 +263,6 @@ void MainWindow::updateTimer(){
 
 
 void MainWindow::hypoglycemiaAlert(){
-    cout << "#MainWindow/hypoglycemiaAlert "<< endl;
 
     // Add item to logs list
     ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BLOOD GLUCOSE VERY LOW (HYPOGLYCEMIA)");
@@ -297,7 +272,6 @@ void MainWindow::hypoglycemiaAlert(){
 }
 
 void MainWindow::hyperglycemiaAlert(){
-    cout << "#MainWindow/hyperglycemiaAlert "<< endl;
 
     // Add item to logs list
     ui->loglist->addItem(QString(ui->home_time_label->text()) + ": BLOOD GLUCOSE VERY HIGH (HYPERGLYCEMIA)");
@@ -347,28 +321,20 @@ void MainWindow::updateInsulinDoseWasEdited(){
 // Once the textbox for currentBG was edited, do not overwrite with CGM's reading for currentBG
 void MainWindow::updateCurrentBGWasEdited(){
     currentBGWasEdited = true;
-    cout << "#MainWindow/updateCurrentBGWasEdited  currentBGWasEdited: " << currentBGWasEdited << endl;
     updateInsulinValue();
 }
 
-// On Bolus Screen,  autopopulating the calculated insulin dose recommended
+// On Bolus Screen, autopopulating the calculated insulin dose recommended
 void MainWindow::updateInsulinValue(){
 
-    cout<<"#MAINWINDOW/updateInsulinValue; before calculating"<<endl;
-    // To prevent division by 0
+   // To prevent division by 0
    if(ui->bolus_carb_intake_textbox->text().toInt() == 0 || ui->bolus_current_BG_textbox->text().toDouble() == 0){
        return;
    }
 
-    double finalBolus = device->calculateBolus(ui->bolus_carb_intake_textbox->text().toInt(), ui->bolus_current_BG_textbox->text().toDouble(), time);
+   double finalBolus = device->calculateBolus(ui->bolus_carb_intake_textbox->text().toInt(), ui->bolus_current_BG_textbox->text().toDouble(), time);
 
-    cout<<"#MAINWINDOW/updateInsulinValue; before setting"<<endl;
-
-    ui->bolus_insulin_dose_textbox->setText(QString::number(finalBolus));
-
-    cout<<"#MAINWINDOW/updateInsulinValue; after settting"<<endl;
-
-
+   ui->bolus_insulin_dose_textbox->setText(QString::number(finalBolus));
 
 }
 
@@ -484,7 +450,6 @@ void MainWindow::power() {
         ui->home_button->setHidden(0);
         go_to_home();
     }
-    std::cout << "POWER BUTTON"<<std::endl;
 
 }
 
@@ -497,12 +462,9 @@ void MainWindow::go_to_options(){
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
-    std::cout << "OPTIONS BUTTON"<<std::endl;
 }
 
 void MainWindow::rechargeDevice(){
-    std::cout << "#MainWindow/rechargeDevice"<<std::endl;
-
     ui->battery->setText("100%");
     device->getBattery()->rechargeBattery();
     ui->power_button->setText("Power On");
@@ -511,7 +473,6 @@ void MainWindow::rechargeDevice(){
 }
 
 void MainWindow::refillCartridge(){
-    std::cout << "#MainWindow/refillInsulin"<<std::endl;
     device->getInsulinCartridge()->refillInsulin();
 }
 
@@ -525,7 +486,7 @@ void MainWindow::go_to_logs() {
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
-    std::cout << "LOG BUTTON"<<std::endl;
+
 }
 
 void MainWindow::go_to_profiles_list() {
@@ -537,11 +498,9 @@ void MainWindow::go_to_profiles_list() {
     ui->personal_profile_screen->setHidden(1);
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
-    std::cout << "PERSONAL PROFILES LIST BUTTON"<<std::endl;
 
     ui->personal_profiles_list->clear();
 
-    //for (UserProfile* profile : profileManager.getAllProfiles()) {
     for (UserProfile* profile : device->getUserProfileManager()->getAllProfiles()) {
         QString profileName = QString::fromStdString(profile->getProfileName());
         ui->personal_profiles_list->addItem(profileName);
@@ -563,11 +522,8 @@ void MainWindow::go_to_current_status() {
             ui->carb_ratio_label->setText(QString::fromStdString(std::to_string(device->getUserProfileManager()->getActiveProfile()->getCarbRatio())));
             ui->correction_factor_label->setText(QString::fromStdString(std::to_string(device->getUserProfileManager()->getActiveProfile()->getCorrectionFactor())));
             ui->insulin_duration_label->setText(QString::fromStdString(std::to_string(device->getUserProfileManager()->getActiveProfile()->getInsulinDuration())));
-            //ui->last_bolus_amount_label->setText(QString::fromStdString(std::to_string(device->getUserProfileManager()->getActiveProfile()->getCarbRatio())));
-            //ui->last_bolus_time_label
             ui->profile_name_label->setText(QString::fromStdString(device->getUserProfileManager()->getActiveProfile()->getProfileName()));
             ui->target_BG_label->setText(QString::fromStdString(std::to_string(device->getUserProfileManager()->getActiveProfile()->gettargetBGlevel())));
-            std::cout << "CURRENT STATUS BUTTON"<<std::endl;
         }
 }
 
@@ -584,7 +540,6 @@ void MainWindow::go_to_profile() {
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
     ui->edit_profile_button->setText("Save");
-    std::cout << "PERSONAL PROFILE BUTTON"<<std::endl;
 }
 
 void MainWindow::go_to_bolus()  {
@@ -597,8 +552,6 @@ void MainWindow::go_to_bolus()  {
     ui->bolus_screen->setHidden(0);
 
     ui->home_screen->setHidden(1);
-
-    std::cout << "BOLUS BUTTON"<<std::endl;
 
     // Only make textboxes editable if an active profile exists
     if (device->getUserProfileManager()->getActiveProfile()){
@@ -633,7 +586,6 @@ void MainWindow::populateActivateDropdown() {
 }
 
 void MainWindow::add_profile(){
-    std::cout << "mainwindow: add_profile" << std::endl;
     ui->profile_name_textbox->setReadOnly(false);
     ui->Device->setHidden(0);
     ui->log_screen->setHidden(0);
@@ -644,14 +596,12 @@ void MainWindow::add_profile(){
     ui->bolus_screen->setHidden(1);
     ui->home_screen->setHidden(1);
     ui->edit_profile_button->setText("Create");
-    std::cout << "ADD PROFILE BUTTON"<<std::endl;
 
     //set insulin duration default to 5
     ui->insulin_duration_textbox->setText(QString::number(5));
 
     ui->personal_profiles_list->clear();
 
-    //for (UserProfile* profile : profileManager.getAllProfiles()) {
     for (UserProfile* profile : device->getUserProfileManager()->getAllProfiles()) {
         QString profileName = QString::fromStdString(profile->getProfileName());
         ui->personal_profiles_list->addItem(profileName);
@@ -659,9 +609,7 @@ void MainWindow::add_profile(){
 }
 
 void MainWindow::edit_button(){
-    std::cout << "mainwindow: edit_button" << std::endl;
     if (ui->edit_profile_button->text() == "Create") {
-        std::cout << "mainwindow: add_profile: CREATE" << std::endl;
         ui->profile_name_textbox->setReadOnly(false);
         int basalRate = ui->basal_rate_textbox->text().toInt();
         int carbRate = ui->carb_ratio_textbox->text().toInt();
@@ -678,12 +626,8 @@ void MainWindow::edit_button(){
             device->getUserProfileManager()->createProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, false);
         }
         
-
-        std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << std::endl;
-
-        //std::cout << "CREATE BUTTON" << std::endl;
-
         go_to_profiles_list();
+
         // Clear the textboxes after profile creation
         ui->profile_name_textbox->clear();
         ui->basal_rate_textbox->clear();
@@ -693,7 +637,6 @@ void MainWindow::edit_button(){
         ui->target_BG_textbox->clear();
         ui->insulin_duration_textbox->clear();
     } else{
-        std::cout << "mainwindow: add_profile: SAVE" << std::endl;
         ui->profile_name_textbox->setReadOnly(true);
         int basalRate = ui->basal_rate_textbox->text().toInt();
         int carbRate = ui->carb_ratio_textbox->text().toInt();
@@ -705,12 +648,9 @@ void MainWindow::edit_button(){
 
 
         device->getUserProfileManager()->updateProfile(profileName, basalRate, carbRate, correctionFactor, targetBG, quickBolus, insulinDuration, device->getUserProfileManager()->getprofile(ui->profile_name_textbox->text().toStdString())->getIsActivated());
-        //UserProfileVector.updateProfile(basalRate, carrbRate,, corrrectionFactor, profileeName, quiickBolus,targetBG);
-        std::cout << "Profile Name: " << profileName << ", Basal Rate: " << basalRate << ", Carb Rate: " << carbRate << ", Correction Factor: " << correctionFactor << ", Quick Bolus: " << quickBolus << ", Target BG: " << targetBG << ", Insulin Duration: " << insulinDuration << std::endl;
-
-        //std::cout << "SAVE BUTTON" << std::endl;
 
         go_to_profiles_list();
+
         // Clear the textboxes after saving profile
         ui->profile_name_textbox->clear();
         ui->basal_rate_textbox->clear();
@@ -725,10 +665,10 @@ void MainWindow::edit_button(){
 
 void MainWindow::delete_profile(){
     std::string profileName = ui->profile_name_textbox->text().toStdString();
-    std::cout << "DELETE BUTTON" << std::endl;
     device->getUserProfileManager()->deleteProfile(profileName);
 
     go_to_profiles_list();
+
     // Clear the textboxes after saving profile
     ui->profile_name_textbox->clear();
     ui->basal_rate_textbox->clear();
@@ -744,7 +684,6 @@ void MainWindow::ActivateProfileClicked(const QModelIndex &index) {
     QString profileName = ui->activateDropdown->itemText(index.row());
     device->getUserProfileManager()->setActiveProfile(profileName.toStdString());
     device->setCurrentBasalRate(device->getUserProfileManager()->getActiveProfile()->getBasalRate());
-    std::cout << "Activated profile (clicked): " << profileName.toStdString() << std::endl;
 }
 
 void MainWindow::go_to_home(){
@@ -756,8 +695,6 @@ void MainWindow::go_to_home(){
     ui->personal_profile_screen->setHidden(0);
     ui->bolus_screen->setHidden(0);
     ui->home_screen->setHidden(0);
-
-    std::cout << "HOME BUTTON"<<std::endl;
 
     //want automatic fill in resumed
     currentBGWasEdited = false;
@@ -784,7 +721,7 @@ void MainWindow::profile_item_clicked(QListWidgetItem* item) {
 
         std::cout << "Loaded profile: " << selectedProfileName << std::endl;
     } else {
-        std::cerr << "Profile not found!" << std::endl;
+        std::cout << "Profile not found!" << std::endl;
     }
 }
 
@@ -810,13 +747,7 @@ void MainWindow::submitBolusInfo()  {
     // Reset for next bolus
     currentBGWasEdited = false;
 
-    double currentBloodGlucose = ui->bolus_current_BG_textbox->text().toDouble();
-    int carbIntake = ui->bolus_carb_intake_textbox->text().toInt();
     double bolusInsulinDose = ui->bolus_insulin_dose_textbox->text().toDouble();
-
-    std::cout << "Current BG: " << currentBloodGlucose << std::endl;
-    std::cout << "Carb Intake: " << carbIntake << std::endl;
-    std::cout << "Insulin Dose: " << bolusInsulinDose << std::endl;
 
     if(ui->extended_radio_button->isChecked()){
 
@@ -846,11 +777,7 @@ void MainWindow::submitBolusInfo()  {
 
         }
 
-        std::cout << "Extended selected\n" << std::endl;
-
-
     } else {
-        std::cout << "Default selected\n" << std::endl;
 
         //default bolus
         if(device->getInsulinCartridge()->getInsulinLevel() >= bolusInsulinDose){
@@ -858,11 +785,10 @@ void MainWindow::submitBolusInfo()  {
             //update status page with last bolus amount and time
             ui->last_bolus_amount_label->setText(QString::number(bolusInsulinDose));
             ui->last_bolus_time_label->setText(QString(ui->home_time_label->text()));
-            //log: the insulin delievered for manual bolus
+            //log the insulin delivered for manual bolus
             ui->loglist->addItem(QString(ui->home_time_label->text())  + " MANUAL BOLUS DELIVERED: " + QString::number(bolusInsulinDose) + " units");
         } else {
             ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
-            //QMessageBox::about(this, "ALERT", "NOT ENOUGH INSULIN"); 
             textLabel->setText("NOT ENOUGH INSULIN");
             alertDialog->show();
         }
@@ -873,13 +799,11 @@ void MainWindow::submitBolusInfo()  {
 void MainWindow::stopOrResumeInsulin(){
     if(device->getIsStopped()){
         device->setIsStopped(false); // resume basal insulin delivery
-        ui->stop_resume_button->setText("StopmanuallyStop = true; Insulin");        
-        std::cout << "MainWindow/stopOrResumeInsulin| INSULIN RESUMED \n" << std::endl;
+        ui->stop_resume_button->setText("Stop Insulin");
     } else { 
         device->setExtendedBolusPhase(0); // stop extended bolus permanently
         device->setIsStopped(true); // stop basal insulin delivery
         ui->stop_resume_button->setText("Resume Insulin");
-        std::cout << "MainWindow/stopOrResumeInsulin| INSULIN STOPPED \n" << std::endl;
     }
 } 
 
@@ -889,7 +813,7 @@ void MainWindow::giveQuickBolus(){
         double quickBolusUnits = device->getUserProfileManager()->getActiveProfile()->getquickBolusUnits();
         if(device->getInsulinCartridge()->getInsulinLevel() >= quickBolusUnits){
             device->deliverBolusDefault(minuteCounter, quickBolusUnits);
-            //log: the insulin delievered for quick bolus
+            //log the insulin delievered for quick bolus
             ui->loglist->addItem(QString(ui->home_time_label->text())  + " QUICK BOLUS DELIVERED: " + QString::number(quickBolusUnits) + " units");
         } else {
             ui->loglist->addItem(QString(ui->home_time_label->text()) + ": NOT ENOUGH INSULIN IN CARTRIDGE");
@@ -941,15 +865,13 @@ void MainWindow::makeGraph(){
     ui->bgGraph->addGraph();
     ui->bgGraph->addGraph();
     ui->bgGraph->addGraph();
-    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    //timeTicker->setTimeFormat("%h:%m:%s");
-    //ui->bgGraph->xAxis->setTicker(timeTicker);
+
     ui->bgGraph->xAxis->setTicks(false);
     ui->bgGraph->yAxis->setLabel("Blood Glucose mmol/L");
     ui->bgGraph->xAxis->setRange(0, 12 * timePeriod[currTimePeriod]);
     ui->bgGraph->yAxis->setRange(3, 11);
     ui->bgGraph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle,5));
-    //ui->bgGraph->graph(0)->setLineStyle(QCPGraph::lsNone);
+
     ui->bgGraph->setBackground(Qt::black);
     ui->bgGraph->yAxis->setTickLabelColor(Qt::white);
     ui->bgGraph->xAxis->setTickLabelColor(Qt::white);
@@ -958,13 +880,11 @@ void MainWindow::makeGraph(){
     limits.setStyle((Qt::DashLine));
     ui->bgGraph->graph(1)->setPen(limits);
     ui->bgGraph->graph(2)->setPen(limits);
-    //ui->bgGraph->graph(1)->setBrush(QBrush(Qt::red,Qt::Dense3Pattern));
-    //ui->bgGraph->graph(1)->setChannelFillGraph(ui->bgGraph->graph(2));
 
     ui->bgGraph->graph(1)->setData(timeRec,bgHighLimit);
     ui->bgGraph->graph(2)->setData(timeRec, bgLowLimit);
 
-    //change graph color to yellow  plot line
+    //change graph color to yellow plot line
     QPen pen;
     pen.setColor(Qt::yellow);
     ui->bgGraph->graph(0)->setPen(pen);
