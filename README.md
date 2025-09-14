@@ -1,5 +1,5 @@
-# Tandem-t-slim-Insulin-Pump
-COMP-3004 project
+Collaborated to build an object-oriented C++/Qt insulin-pump simulator with profile management, bolus
+functionalities, live dashboard, and logging.
 
 Members:
 
